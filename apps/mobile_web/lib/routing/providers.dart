@@ -10,6 +10,7 @@ import '../data/learning_repository.dart';
 import '../domain/gate_policy.dart';
 import '../domain/playback.dart';
 import '../domain/profile.dart';
+import '../domain/session_timer.dart';
 
 final repositoryProvider = Provider<LearningRepository>((ref) {
   throw StateError('LearningRepository is provided at startup.');
@@ -120,7 +121,7 @@ class AudioCoordinator extends Notifier<Playback> {
   }
 }
 
-enum DownloadPhase { idle, downloading, failed, checksum, saved }
+enum DownloadPhase { idle, downloading, retrying, failed, checksum, saved }
 
 class DownloadState {
   const DownloadState({this.phase = DownloadPhase.idle, this.contentId});
@@ -142,9 +143,12 @@ class DownloadController extends Notifier<DownloadState> {
   Future<void> start(String contentId) async {
     _token?.cancel();
     final token = DownloadCancelToken();
+    final retry =
+        state.phase == DownloadPhase.failed ||
+        state.phase == DownloadPhase.checksum;
     _token = token;
     state = DownloadState(
-      phase: DownloadPhase.downloading,
+      phase: retry ? DownloadPhase.retrying : DownloadPhase.downloading,
       contentId: contentId,
     );
     final outcome = await LessonDownloader(
@@ -180,5 +184,63 @@ final routerRefreshProvider = Provider<RouterRefresh>((ref) {
   ref.onDispose(refresh.dispose);
   ref.listen(sessionProvider, (_, _) => refresh.ping());
   ref.listen(parentGateProvider, (_, _) => refresh.ping());
+  ref.listen(playReminderProvider, (previous, next) {
+    if (previous?.ended != next.ended) refresh.ping();
+  });
   return refresh;
 });
+
+final playReminderProvider = NotifierProvider<PlayReminder, SessionClock>(
+  PlayReminder.new,
+);
+
+class PlayReminder extends Notifier<SessionClock> {
+  var _chosen = false;
+
+  @override
+  SessionClock build() {
+    Future<void>(() async {
+      try {
+        final raw = await ref
+            .read(repositoryProvider)
+            .getSetting(sessionLimitSettingKey);
+        if (!ref.mounted || _chosen) return;
+        final minutes = int.tryParse(raw ?? '');
+        final next = minutes == null || minutes <= 0
+            ? const SessionClock()
+            : SessionClock(limitMinutes: minutes);
+        if (next != state) state = next;
+      } catch (_) {
+        // A missing store leaves the reminder off.
+      }
+    });
+    return const SessionClock();
+  }
+
+  Future<void> choose(int? minutes) async {
+    _chosen = true;
+    await ref
+        .read(repositoryProvider)
+        .setSetting(sessionLimitSettingKey, minutes == null ? '' : '$minutes');
+    state = state.withLimit(minutes);
+  }
+
+  void tick(Duration delta) {
+    final next = state.tick(delta);
+    if (next != state) state = next;
+  }
+
+  void background() {
+    final next = state.background();
+    if (next != state) state = next;
+  }
+
+  void foreground() {
+    final next = state.foreground();
+    if (next != state) state = next;
+  }
+
+  void acknowledge() {
+    state = state.acknowledge();
+  }
+}

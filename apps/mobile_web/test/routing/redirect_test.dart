@@ -88,4 +88,67 @@ void main() {
       '/loading',
     );
   });
+
+  test('an ended reminder leaves child play and leaves parent pages alone', () {
+    expect(
+      redirectFor(
+        location: '/',
+        sessionLoading: false,
+        hasProfile: true,
+        gateUnlocked: false,
+        sessionEnded: true,
+      ),
+      '/rest',
+    );
+    expect(
+      redirectFor(
+        location: '/c/animals',
+        sessionLoading: false,
+        hasProfile: true,
+        gateUnlocked: false,
+        sessionEnded: true,
+      ),
+      '/rest',
+    );
+    expect(
+      redirectFor(
+        location: '/a/animal.elephant.001',
+        sessionLoading: false,
+        hasProfile: true,
+        gateUnlocked: false,
+        sessionEnded: true,
+      ),
+      '/rest',
+    );
+    expect(
+      redirectFor(
+        location: '/parent',
+        sessionLoading: false,
+        hasProfile: true,
+        gateUnlocked: true,
+        sessionEnded: true,
+      ),
+      isNull,
+    );
+    expect(
+      redirectFor(
+        location: '/rest',
+        sessionLoading: false,
+        hasProfile: true,
+        gateUnlocked: false,
+        sessionEnded: true,
+      ),
+      isNull,
+    );
+    expect(
+      redirectFor(
+        location: '/local',
+        sessionLoading: false,
+        hasProfile: false,
+        gateUnlocked: false,
+        sessionEnded: true,
+      ),
+      isNull,
+    );
+  });
 }

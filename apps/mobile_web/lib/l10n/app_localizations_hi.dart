@@ -133,10 +133,68 @@ class AppLocalizationsHi extends AppLocalizations {
   String get accountNotAvailable => 'इस संस्करण में खाता नहीं है।';
 
   @override
-  String get sessionNotBuilt => 'इस संस्करण में सत्र की सीमा नहीं है।';
+  String get privacyNotBuilt => 'इस संस्करण में खाता निर्यात और हटाना नहीं है।';
 
   @override
-  String get privacyNotBuilt => 'इस संस्करण में खाता निर्यात और हटाना नहीं है।';
+  String get caregiverPurpose =>
+      'Little Genius लगभग 1 से 5 साल के बच्चों के लिए एक शांत जगह है, जहाँ वे देख सकते हैं, सुन सकते हैं, और टैप कर सकते हैं।';
+
+  @override
+  String get caregiverPrivacy =>
+      'एक उपनाम काफ़ी है। हम कानूनी नाम, फ़ोटो, या स्कूल नहीं पूछते।';
+
+  @override
+  String get caregiverAccount =>
+      'इस संस्करण में खाता नहीं है। कुछ भी अपलोड नहीं होता। आगे चलकर खाता एक अलग चुनाव होगा, और वह अभी चालू नहीं है।';
+
+  @override
+  String get sessionLimitTitle => 'खेलने की याद';
+
+  @override
+  String get sessionLimitBody =>
+      'आप इस ऐप के अंदर एक याद सेट कर सकते हैं। यह फ़ोन को लॉक नहीं करता, और यह स्क्रीन टाइम या डिवाइस नियंत्रण नहीं है। याद तभी गिनती है जब Little Genius खुला हो।';
+
+  @override
+  String get sessionOff => 'कोई याद नहीं';
+
+  @override
+  String sessionMinutes(int count) {
+    return '$count मिनट';
+  }
+
+  @override
+  String get sessionEndedTitle => 'आराम का समय';
+
+  @override
+  String get sessionEndedBody =>
+      'Little Genius के अंदर की याद पूरी हो गई। इसने डिवाइस बंद नहीं किया।';
+
+  @override
+  String get sessionPaused =>
+      'जब Little Genius पीछे हो, तब याद रुकी रहती है। यह फ़ोन को नियंत्रित नहीं करता।';
+
+  @override
+  String get stateLoading => 'लोड हो रहा है';
+
+  @override
+  String get stateEmpty => 'यहाँ अभी कुछ नहीं है।';
+
+  @override
+  String get stateSuccess => 'सहेजा गया';
+
+  @override
+  String get stateRecoverable => 'कुछ गड़बड़ हुई। आप फिर कोशिश कर सकते हैं।';
+
+  @override
+  String get stateOffline =>
+      'आप ऑफ़लाइन हैं। सहेजी गतिविधियाँ फिर भी चल सकती हैं।';
+
+  @override
+  String get stateRetrying => 'फिर कोशिश हो रही है';
+
+  @override
+  String get stateUpdateAvailable =>
+      'एक नया संस्करण उपलब्ध है। जो आप खेल रहे हैं, वह वैसा ही रहता है।';
 
   @override
   String get pause => 'रोकें';

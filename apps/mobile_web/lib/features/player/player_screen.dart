@@ -15,7 +15,9 @@ import '../../domain/locale_copy.dart';
 import '../../domain/progress_rules.dart';
 import '../../l10n/app_localizations.dart';
 import '../../routing/providers.dart';
+import '../common/app_status.dart';
 import '../common/page_frame.dart';
+import '../common/status_message.dart';
 
 class PlayerScreen extends ConsumerStatefulWidget {
   const PlayerScreen({super.key, required this.contentId});
@@ -176,32 +178,48 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen> {
     if (_kind == _PlayerKind.loading) {
       return PageFrame(
         onHome: () => context.go('/'),
-        child: Center(child: Text(text.downloading)),
+        child: const Center(child: StatusMessage(status: AppStatus.loading)),
       );
     }
     if (_kind == _PlayerKind.checksum) {
       return PageFrame(
         onHome: () => context.go('/'),
         child: Center(
-          child: Text(text.checksumError, textAlign: TextAlign.center),
+          child: StatusMessage(
+            status: AppStatus.recoverableError,
+            message: text.checksumError,
+          ),
         ),
       );
     }
     if (_kind == _PlayerKind.missing) {
-      final busy = download.phase == DownloadPhase.downloading;
+      final busy =
+          download.phase == DownloadPhase.downloading ||
+          download.phase == DownloadPhase.retrying;
       return PageFrame(
         onHome: () => context.go('/'),
         child: ListView(
           padding: const EdgeInsets.all(24),
           children: [
             Text(text.downloadFirst),
+            if (download.phase == DownloadPhase.downloading)
+              const StatusMessage(status: AppStatus.downloading),
+            if (download.phase == DownloadPhase.retrying)
+              const StatusMessage(status: AppStatus.retrying),
             if (download.phase == DownloadPhase.failed)
-              Text(text.downloadFailed),
+              const StatusMessage(status: AppStatus.downloadFailed),
             if (download.phase == DownloadPhase.checksum)
-              Text(text.checksumError),
+              StatusMessage(
+                status: AppStatus.recoverableError,
+                message: text.checksumError,
+              ),
             const SizedBox(height: 16),
             BigButton(
-              label: busy ? text.downloading : text.downloadAction,
+              label: switch (download.phase) {
+                DownloadPhase.downloading => text.downloading,
+                DownloadPhase.retrying => text.stateRetrying,
+                _ => text.downloadAction,
+              },
               icon: Icons.download,
               onPressed: busy
                   ? null

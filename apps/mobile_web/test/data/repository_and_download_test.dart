@@ -99,6 +99,7 @@ void main() {
         isFalse,
       );
       expect(await first.listOutbox(profile.profileId), hasLength(2));
+      await first.setSetting('session_limit_minutes', '10');
       await first.close();
 
       final reopened = DriftLearningRepository.openFile(file);
@@ -113,6 +114,7 @@ void main() {
         'ta',
       );
       expect(await reopened.getActiveProfileId(), profile.profileId);
+      expect(await reopened.getSetting('session_limit_minutes'), '10');
       await reopened.close();
     },
   );

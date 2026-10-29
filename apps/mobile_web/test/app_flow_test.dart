@@ -30,6 +30,13 @@ void main() {
     await tester.tap(find.text('தொடருங்கள்'));
     await tester.pumpAndSettle();
     expect(find.text('இது இந்தச் சாதனத்திலேயே இருக்கும்'), findsOneWidget);
+    expect(
+      find.text(
+        'இந்தப் பதிப்பில் கணக்கு இல்லை. எதுவும் பதிவேற்றப்படாது. எதிர்காலக் கணக்கு தனித் தேர்வாக இருக்கும், அது இப்போது இயக்கப்படவில்லை.',
+      ),
+      findsOneWidget,
+    );
+    expect(find.byKey(const Key('create-account')), findsNothing);
     await tester.tap(find.text('தொடருங்கள்'));
     await tester.pumpAndSettle();
     await tester.enterText(find.byKey(const Key('nickname-field')), 'Asha');

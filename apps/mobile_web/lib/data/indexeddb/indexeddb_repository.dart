@@ -99,6 +99,13 @@ class IndexedDbLearningRepository implements LearningRepository {
   Future<String?> getActiveProfileId() => _get('settings', 'active_profile_id');
 
   @override
+  Future<void> setSetting(String key, String value) =>
+      _put('settings', key, value);
+
+  @override
+  Future<String?> getSetting(String key) => _get('settings', key);
+
+  @override
   Future<void> saveDocument(StoredDocument document) {
     return _put(
       'documents',

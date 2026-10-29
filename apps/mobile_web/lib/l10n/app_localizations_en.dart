@@ -133,11 +133,69 @@ class AppLocalizationsEn extends AppLocalizations {
   String get accountNotAvailable => 'Accounts are not in this version.';
 
   @override
-  String get sessionNotBuilt => 'Session limits are not in this version.';
-
-  @override
   String get privacyNotBuilt =>
       'Account export and deletion are not in this version.';
+
+  @override
+  String get caregiverPurpose =>
+      'Little Genius is a quiet place for children about 1 to 5 years old to look, listen, and tap.';
+
+  @override
+  String get caregiverPrivacy =>
+      'A nickname is enough. We do not ask for a legal name, a photo, or a school.';
+
+  @override
+  String get caregiverAccount =>
+      'An account is not part of this version. Nothing is uploaded. A future account would be a separate choice, and it is not turned on.';
+
+  @override
+  String get sessionLimitTitle => 'Play reminder';
+
+  @override
+  String get sessionLimitBody =>
+      'You can set a reminder that stays inside this app. It does not lock the phone, and it is not Screen Time or a device control. The reminder counts only while Little Genius is open.';
+
+  @override
+  String get sessionOff => 'No reminder';
+
+  @override
+  String sessionMinutes(int count) {
+    return '$count minutes';
+  }
+
+  @override
+  String get sessionEndedTitle => 'Time for a rest';
+
+  @override
+  String get sessionEndedBody =>
+      'The play reminder inside Little Genius has finished. It did not turn off the device.';
+
+  @override
+  String get sessionPaused =>
+      'The reminder is paused while Little Genius is in the background. It does not control the phone.';
+
+  @override
+  String get stateLoading => 'Loading';
+
+  @override
+  String get stateEmpty => 'Nothing here yet.';
+
+  @override
+  String get stateSuccess => 'Saved';
+
+  @override
+  String get stateRecoverable => 'Something went wrong. You can try again.';
+
+  @override
+  String get stateOffline =>
+      'You are offline. Saved activities can still be played.';
+
+  @override
+  String get stateRetrying => 'Trying again';
+
+  @override
+  String get stateUpdateAvailable =>
+      'A newer copy is available. The one you are playing stays as it is.';
 
   @override
   String get pause => 'Pause';
