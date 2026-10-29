@@ -1,0 +1,62 @@
+{
+  "schemaVersion": "1.0",
+  "contentId": "animal.elephant.001",
+  "contentVersion": 1,
+  "categoryId": "animals",
+  "ageRange": { "minMonths": 12, "maxMonths": 60 },
+  "learningObjectives": ["object_recognition", "vocabulary"],
+  "difficulty": 1,
+  "estimatedDurationSeconds": 45,
+  "localizations": {
+    "en": {
+      "title": "Elephant",
+      "instruction": "Tap the elephant",
+      "feedbackCorrect": "Great exploring!",
+      "audio": { "instructionAssetId": "aud.elephant.en.instruction" }
+    },
+    "hi": {
+      "title": "हाथी",
+      "instruction": "हाथी पर टैप करें",
+      "feedbackCorrect": "बहुत अच्छा!",
+      "audio": { "instructionAssetId": "aud.elephant.hi.instruction" }
+    },
+    "ta": {
+      "title": "யானை",
+      "instruction": "யானையைத் தொடு",
+      "feedbackCorrect": "நன்றாகச் செய்தாய்!",
+      "audio": { "instructionAssetId": "aud.elephant.ta.instruction" }
+    }
+  },
+  "assets": [
+    {
+      "assetId": "img.elephant.001",
+      "mediaType": "image",
+      "sha256": "1af02ec424c01101d0a6b752e36390664f1489510d643caf944f616e52237179"
+    },
+    {
+      "assetId": "aud.elephant.en.instruction",
+      "mediaType": "audio",
+      "sha256": "f01c4585d67a0b1cbad6628c7a4873af8136879a4583c1b6cc5ff010f42114d1"
+    },
+    {
+      "assetId": "aud.elephant.hi.instruction",
+      "mediaType": "audio",
+      "sha256": "0a11ae5602b15aebbb9d5738a5b8b65e9e95a91d3adb6806d7e5414e1b8963c4"
+    },
+    {
+      "assetId": "aud.elephant.ta.instruction",
+      "mediaType": "audio",
+      "sha256": "6e20e9425764d07eec94406b1e439f0679049967c43b419336b227662d17e094"
+    }
+  ],
+  "interaction": {
+    "type": "tap_to_learn",
+    "targetAssetId": "img.elephant.001",
+    "completionRule": "target_tapped",
+    "retryPolicy": "unlimited"
+  },
+  "accessibility": {
+    "imageLabel": { "en": "Elephant", "hi": "हाथी", "ta": "யானை" },
+    "requiresAudio": false
+  }
+}

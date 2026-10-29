@@ -1,0 +1,117 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.invalid/little-genius/lesson-document.schema.json",
+  "title": "LessonDocument",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "contentId",
+    "contentVersion",
+    "categoryId",
+    "ageRange",
+    "learningObjectives",
+    "difficulty",
+    "estimatedDurationSeconds",
+    "localizations",
+    "assets",
+    "interaction",
+    "accessibility"
+  ],
+  "properties": {
+    "schemaVersion": { "type": "string", "enum": ["1.0"] },
+    "contentId": { "type": "string", "pattern": "^[a-z0-9._-]{1,80}$" },
+    "contentVersion": { "type": "integer", "minimum": 1 },
+    "categoryId": { "type": "string", "minLength": 1, "maxLength": 64 },
+    "ageRange": { "$ref": "#/$defs/ageRange" },
+    "learningObjectives": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "type": "string", "maxLength": 64 }
+    },
+    "difficulty": { "type": "integer", "minimum": 1, "maximum": 5 },
+    "estimatedDurationSeconds": { "type": "integer", "minimum": 10, "maximum": 600 },
+    "localizations": {
+      "type": "object",
+      "minProperties": 1,
+      "additionalProperties": false,
+      "properties": {
+        "en": { "$ref": "#/$defs/localization" },
+        "hi": { "$ref": "#/$defs/localization" },
+        "ta": { "$ref": "#/$defs/localization" }
+      }
+    },
+    "assets": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/assetRef" }
+    },
+    "interaction": { "$ref": "#/$defs/tapToLearn" },
+    "accessibility": { "$ref": "#/$defs/accessibility" }
+  },
+  "$defs": {
+    "ageRange": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["minMonths", "maxMonths"],
+      "properties": {
+        "minMonths": { "type": "integer", "minimum": 12, "maximum": 60 },
+        "maxMonths": { "type": "integer", "minimum": 12, "maximum": 60 }
+      }
+    },
+    "localization": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["title", "instruction", "feedbackCorrect"],
+      "properties": {
+        "title": { "type": "string", "minLength": 1, "maxLength": 80 },
+        "instruction": { "type": "string", "minLength": 1, "maxLength": 160 },
+        "feedbackCorrect": { "type": "string", "minLength": 1, "maxLength": 80 },
+        "audio": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "instructionAssetId": { "type": "string", "pattern": "^[a-z0-9._-]{1,80}$" }
+          }
+        }
+      }
+    },
+    "assetRef": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["assetId", "mediaType", "sha256"],
+      "properties": {
+        "assetId": { "type": "string", "pattern": "^[a-z0-9._-]{1,80}$" },
+        "mediaType": { "type": "string", "enum": ["image", "audio", "sound_effect"] },
+        "sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" }
+      }
+    },
+    "tapToLearn": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["type", "targetAssetId", "completionRule", "retryPolicy"],
+      "properties": {
+        "type": { "type": "string", "enum": ["tap_to_learn"] },
+        "targetAssetId": { "type": "string", "pattern": "^[a-z0-9._-]{1,80}$" },
+        "completionRule": { "type": "string", "enum": ["target_tapped"] },
+        "retryPolicy": { "type": "string", "enum": ["unlimited"] }
+      }
+    },
+    "accessibility": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["imageLabel", "requiresAudio"],
+      "properties": {
+        "imageLabel": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "en": { "type": "string" },
+            "hi": { "type": "string" },
+            "ta": { "type": "string" }
+          }
+        },
+        "requiresAudio": { "type": "boolean" }
+      }
+    }
+  }
+}

@@ -1,0 +1,14 @@
+.DS_Store
+*.log
+.env
+.env.*
+!.env.example
+node_modules/
+dist/
+coverage/
+.dart_tool/
+build/
+*.iml
+.idea/
+.flutter-plugins
+.flutter-plugins-dependencies

@@ -1,0 +1,81 @@
+{
+  "@@locale": "en",
+  "appTitle": "Little Genius",
+  "welcomeTitle": "Welcome",
+  "welcomeBody": "A quiet place to play and learn.",
+  "continueAction": "Continue",
+  "chooseLanguage": "Choose a language",
+  "languageEnglish": "English",
+  "languageHindi": "हिन्दी",
+  "languageTamil": "தமிழ்",
+  "gateTitle": "Grown-up check",
+  "gateBody": "Please ask a grown-up to answer.",
+  "gateQuestion": "What is 3 + 4?",
+  "gateWrong": "Try again.",
+  "localTitle": "This stays on this device",
+  "localBody": "No account is needed. Learning stays here.",
+  "webStorageNote": "On the web, the browser can clear saved lessons. A phone keeps them more reliably.",
+  "createProfile": "Create a profile",
+  "nicknameLabel": "What should we call them?",
+  "nicknameHint": "A nickname, not a legal name",
+  "avatarLabel": "Pick a picture",
+  "ageBandLabel": "Age band",
+  "band12": "1 to 2 years",
+  "band23": "2 to 3 years",
+  "band34": "3 to 4 years",
+  "band45": "4 to 5 years",
+  "bilingualLabel": "Show a second language",
+  "helloName": "Hello, {name}",
+  "@helloName": {
+    "placeholders": {
+      "name": { "type": "String" }
+    }
+  },
+  "animalsTitle": "Animals",
+  "downloadAction": "Download",
+  "downloading": "Downloading",
+  "downloadFailed": "The download did not finish. Try again.",
+  "playAction": "Play",
+  "contentUnavailable": "This activity is not available.",
+  "goHome": "Home",
+  "back": "Back",
+  "parentArea": "Grown-ups",
+  "languageSettings": "Language",
+  "downloadsTitle": "Downloads",
+  "progressTitle": "Progress",
+  "profilesTitle": "Profiles",
+  "accountNotAvailable": "Accounts are not in this version.",
+  "sessionNotBuilt": "Session limits are not in this version.",
+  "privacyNotBuilt": "Account export and deletion are not in this version.",
+  "pause": "Pause",
+  "replay": "Replay",
+  "playAudio": "Play instruction",
+  "checksumError": "This download could not be checked, so it was not saved.",
+  "finished": "Finished",
+  "retry": "Try again",
+  "cancel": "Cancel",
+  "hearOtherLanguage": "Hear the other language",
+  "audioMissing": "The sound is not available.",
+  "downloadFirst": "Download the activity before play.",
+  "startedLabel": "Started: {count}",
+  "@startedLabel": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "completedLabel": "Finished: {count}",
+  "@completedLabel": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "noProgress": "Nothing finished yet.",
+  "save": "Save",
+  "nicknameInvalid": "Use 1 to 24 characters.",
+  "avatarStar": "Star",
+  "avatarSun": "Sun",
+  "avatarLeaf": "Leaf",
+  "avatarMoon": "Moon",
+  "avatarBird": "Bird",
+  "avatarFish": "Fish"
+}
