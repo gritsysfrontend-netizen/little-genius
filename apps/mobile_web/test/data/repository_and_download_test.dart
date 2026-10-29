@@ -7,6 +7,9 @@ import 'package:little_genius/content/canonical_json.dart';
 import 'package:little_genius/data/downloader.dart';
 import 'package:little_genius/data/drift/drift_repository.dart';
 import 'package:little_genius/data/memory/memory_repository.dart';
+import 'package:little_genius/data/pack_downloader.dart';
+import 'package:little_genius/data/records.dart';
+import 'package:little_genius/domain/content_pack.dart';
 import 'package:little_genius/domain/profile.dart';
 import 'package:little_genius/domain/progress_rules.dart';
 
@@ -55,6 +58,63 @@ void main() {
       lessonHash,
     );
     expect((await repository.getBlob('img.elephant.001'))!.bytes, image);
+    expect(
+      await repository.storageUsedBytes(),
+      lessonBytes.length + image.length,
+    );
+  });
+
+  test('a bad pack checksum is rejected and the last manifest stays', () async {
+    final repository = MemoryLearningRepository();
+    await repository.setSetting(publishedPackSettingKey, 'last-good');
+    final image = Uint8List.fromList([1, 2, 3, 4]);
+    final imageHash = sha256Hex(image);
+    final document = _oneAssetLesson(imageHash);
+    final lessonBytes = utf8.encode(canonicalJson(document));
+    final lessonHash = sha256Hex(lessonBytes);
+    final pin = PackPin(
+      position: 0,
+      contentId: 'animal.elephant.001',
+      contentVersion: 1,
+      payloadSha256: lessonHash,
+    );
+    final source = _MapSource({
+      '/api/v1/content/packs/$catalogPackId': utf8.encode(
+        _packBody([pin], checksum: 'ab' * 32),
+      ),
+      '/api/v1/content/animal.elephant.001': _pointer(lessonHash),
+      '/api/v1/content/animal.elephant.001/versions/1': lessonBytes,
+      '/api/v1/assets/img.elephant.001': utf8.encode(
+        '{"assetId":"img.elephant.001","mediaType":"image","sha256":"$imageHash","byteSize":4,"url":"https://cdn.test/elephant","urlExpiresAt":"2099-01-01T00:00:00Z"}',
+      ),
+      'https://cdn.test/elephant': image,
+    });
+    final downloader = PackDownloader(source: source, repository: repository);
+    final rejected = await downloader.download(
+      packId: catalogPackId,
+      token: DownloadCancelToken(),
+    );
+    expect(rejected.status, DownloadStatus.checksumMismatch);
+    expect(await repository.getSetting(publishedPackSettingKey), 'last-good');
+    expect(await repository.latestDocument('animal.elephant.001'), isNull);
+
+    source.bodies['/api/v1/content/packs/$catalogPackId'] = utf8.encode(
+      _packBody([pin]),
+    );
+    final saved = await downloader.download(
+      packId: catalogPackId,
+      token: DownloadCancelToken(),
+    );
+    expect(saved.status, DownloadStatus.saved);
+    final installed = parseContentPack(
+      jsonDecode((await repository.getSetting(publishedPackSettingKey))!),
+    );
+    expect(installed, isNotNull);
+    expect(installed!.packVersion, 1);
+    expect(
+      (await repository.latestDocument('animal.elephant.001'))!.payloadSha256,
+      lessonHash,
+    );
   });
 
   test(
@@ -115,7 +175,27 @@ void main() {
       );
       expect(await reopened.getActiveProfileId(), profile.profileId);
       expect(await reopened.getSetting('session_limit_minutes'), '10');
+      await reopened.saveDocument(
+        const StoredDocument(
+          contentId: 'color.red.001',
+          contentVersion: 1,
+          payload: 'hi',
+          payloadSha256: 'aa',
+        ),
+      );
+      await reopened.saveBlob(
+        StoredBlob(
+          assetId: 'img.x',
+          sha256: 'bb',
+          mediaType: 'image',
+          bytes: Uint8List.fromList([1, 2]),
+        ),
+      );
+      expect(await reopened.storageUsedBytes(), 4);
       await reopened.close();
+      final stored = DriftLearningRepository.openFile(file);
+      expect(await stored.storageUsedBytes(), 4);
+      await stored.close();
     },
   );
 
@@ -143,6 +223,26 @@ Map<String, dynamic> _oneAssetLesson(String imageHash) {
     (copy as Map).remove('audio');
   }
   return document;
+}
+
+String _packBody(List<PackPin> items, {String? checksum}) {
+  final sum = checksum ?? sha256Hex(utf8.encode(packMaterial(items)));
+  return jsonEncode({
+    'packId': catalogPackId,
+    'packVersion': 1,
+    'checksumSha256': sum,
+    'totalBytes': 4,
+    'minAppVersion': '0.1.0',
+    'items': [
+      for (final item in items)
+        {
+          'position': item.position,
+          'contentId': item.contentId,
+          'contentVersion': item.contentVersion,
+          'payloadSha256': item.payloadSha256,
+        },
+    ],
+  });
 }
 
 List<int> _pointer(String hash) {

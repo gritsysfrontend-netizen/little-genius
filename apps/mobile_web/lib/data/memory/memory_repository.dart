@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import '../../domain/ids.dart';
 import '../../domain/profile.dart';
 import '../../domain/progress_rules.dart';
@@ -143,6 +145,19 @@ class MemoryLearningRepository implements LearningRepository {
   Future<void> deleteBlob(String assetId) async {
     _check();
     _blobs.remove(assetId);
+  }
+
+  @override
+  Future<int> storageUsedBytes() async {
+    _check();
+    var total = 0;
+    for (final document in _documents.values) {
+      total += utf8.encode(document.payload).length;
+    }
+    for (final blob in _blobs.values) {
+      total += blob.bytes.length;
+    }
+    return total;
   }
 
   @override

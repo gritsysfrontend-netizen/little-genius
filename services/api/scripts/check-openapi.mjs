@@ -18,6 +18,7 @@ const expected = [
   'getHealth',
   'getReady',
   'getContentManifest',
+  'getContentPack',
   'getContentVersionPointer',
   'getLessonDocument',
   'getAssetDescriptor',

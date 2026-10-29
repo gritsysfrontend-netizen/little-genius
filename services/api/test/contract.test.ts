@@ -6,6 +6,11 @@ import { PrismaClient } from '@prisma/client';
 import type { FastifyInstance } from 'fastify';
 import { buildApp } from '../src/app.js';
 import type { AppConfig } from '../src/config.js';
+import {
+  packChecksum,
+  publishNextPackVersion,
+  rollbackPublishedPack,
+} from '../src/modules/content/packs.js';
 import { defaultFixtureDir, defaultSchemaPath, seedDatabase } from '../src/seed.js';
 
 const prisma = new PrismaClient();
@@ -89,6 +94,7 @@ test('manifest returns the elephant lesson for each locale and band', async () =
       interactionType: string;
       payloadSha256: string;
       contentId: string;
+      packId: string;
     }>;
   };
   assert.equal(body.locale, 'hi');
@@ -101,6 +107,8 @@ test('manifest returns the elephant lesson for each locale and band', async () =
   assert.equal(body.items[1]?.contentId, 'color.red.001');
   assert.equal(body.items[1]?.title, 'लाल');
   assert.equal(body.items[1]?.interactionType, 'single_choice');
+  assert.equal(body.items[0]?.packId, 'pack.catalog.001');
+  assert.equal(body.items[1]?.packId, 'pack.catalog.001');
   const rawHash = createHash('sha256').update(response.body).digest('hex');
   assert.equal(`"${rawHash}"`, response.headers.etag);
 });
@@ -116,6 +124,122 @@ test('manifest age band 4-5 keeps counting and sequencing only', async () => {
     body.items.map((item) => item.contentId),
     ['animal.elephant.001', 'count.birds.001', 'order.morning.001'],
   );
+});
+
+test('the catalog pack checksum matches its pins and a bad checksum is rejected', async () => {
+  const response = await app.inject({
+    method: 'GET',
+    url: '/api/v1/content/packs/pack.catalog.001',
+  });
+  assert.equal(response.statusCode, 200);
+  const body = response.json() as {
+    packId: string;
+    packVersion: number;
+    checksumSha256: string;
+    totalBytes: number;
+    items: Array<{
+      position: number;
+      contentId: string;
+      contentVersion: number;
+      payloadSha256: string;
+    }>;
+  };
+  assert.equal(body.packId, 'pack.catalog.001');
+  assert.equal(body.totalBytes > 0, true);
+  assert.deepEqual(
+    body.items.map((item) => item.contentId),
+    [
+      'animal.elephant.001',
+      'color.red.001',
+      'count.birds.001',
+      'order.morning.001',
+      'pair.daynight.001',
+      'sort.bigsmall.001',
+    ],
+  );
+  assert.equal(
+    body.checksumSha256,
+    packChecksum(
+      body.items.map((item) => ({
+        contentId: item.contentId,
+        contentVersion: item.contentVersion,
+      })),
+    ),
+  );
+  const missing = await app.inject({ method: 'GET', url: '/api/v1/content/packs/pack.missing' });
+  assert.equal(missing.statusCode, 404);
+  assert.equal(missing.json().error.code, 'CONTENT_NOT_FOUND');
+
+  const row = await prisma.contentPack.findFirstOrThrow({
+    where: { packId: 'pack.catalog.001', status: 'published' },
+  });
+  await prisma.contentPack.update({
+    where: { packId_packVersion: { packId: row.packId, packVersion: row.packVersion } },
+    data: { checksumSha256: '0'.repeat(64) },
+  });
+  try {
+    const bad = await app.inject({ method: 'GET', url: '/api/v1/content/packs/pack.catalog.001' });
+    assert.equal(bad.statusCode, 500);
+    assert.equal(bad.json().error.code, 'INTERNAL');
+    assert.equal(bad.json().error.retryable, true);
+    assert.equal('items' in bad.json(), false);
+  } finally {
+    await prisma.contentPack.update({
+      where: { packId_packVersion: { packId: row.packId, packVersion: row.packVersion } },
+      data: { checksumSha256: row.checksumSha256 },
+    });
+  }
+});
+
+test('rollback restores the last published pack and leaves lesson bytes alone', async () => {
+  const before = await app.inject({ method: 'GET', url: '/api/v1/content/packs/pack.catalog.001' });
+  const published = before.json() as {
+    packVersion: number;
+    totalBytes: number;
+    items: Array<{ contentId: string; contentVersion: number; payloadSha256: string }>;
+  };
+  const elephantBefore = await prisma.contentVersion.findUniqueOrThrow({
+    where: { contentId_contentVersion: { contentId: 'animal.elephant.001', contentVersion: 1 } },
+  });
+  const next = await publishNextPackVersion(
+    prisma,
+    'pack.catalog.001',
+    published.items.map((item) => ({
+      contentId: item.contentId,
+      contentVersion: item.contentVersion,
+    })),
+    published.totalBytes,
+  );
+  try {
+    const during = await app.inject({
+      method: 'GET',
+      url: '/api/v1/content/packs/pack.catalog.001',
+    });
+    assert.equal(during.statusCode, 200);
+    assert.equal(during.json().packVersion, next);
+    assert.equal(await rollbackPublishedPack(prisma, 'pack.catalog.001'), published.packVersion);
+    const after = await app.inject({
+      method: 'GET',
+      url: '/api/v1/content/packs/pack.catalog.001',
+    });
+    assert.equal(after.json().packVersion, published.packVersion);
+    assert.deepEqual(
+      after.json().items.map((item: { contentId: string }) => item.contentId),
+      published.items.map((item) => item.contentId),
+    );
+    const elephantAfter = await prisma.contentVersion.findUniqueOrThrow({
+      where: { contentId_contentVersion: { contentId: 'animal.elephant.001', contentVersion: 1 } },
+    });
+    assert.equal(elephantAfter.payloadSha256, elephantBefore.payloadSha256);
+    assert.equal(elephantAfter.status, 'published');
+  } finally {
+    const current = await prisma.contentPack.findFirst({
+      where: { packId: 'pack.catalog.001', status: 'published' },
+    });
+    if (current && current.packVersion !== published.packVersion) {
+      await rollbackPublishedPack(prisma, 'pack.catalog.001');
+    }
+  }
 });
 
 test('manifest rejects a missing or unknown locale', async () => {

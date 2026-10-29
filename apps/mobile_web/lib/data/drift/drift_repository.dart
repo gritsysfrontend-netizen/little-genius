@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:drift/drift.dart';
@@ -228,6 +229,20 @@ class DriftLearningRepository implements LearningRepository {
     await (_db.delete(
       _db.blobRows,
     )..where((table) => table.assetId.equals(assetId))).go();
+  }
+
+  @override
+  Future<int> storageUsedBytes() async {
+    final documents = await _db.select(_db.documentRows).get();
+    final blobs = await _db.select(_db.blobRows).get();
+    var total = 0;
+    for (final document in documents) {
+      total += utf8.encode(document.payload).length;
+    }
+    for (final blob in blobs) {
+      total += blob.bytes.length;
+    }
+    return total;
   }
 
   @override

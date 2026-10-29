@@ -41,6 +41,22 @@
   "countLess": "Less",
   "countDone": "Done",
   "gentleRetry": "Let's try again.",
+  "storageUsed": "Storage used: {bytes} bytes",
+  "@storageUsed": {
+    "placeholders": {
+      "bytes": { "type": "int" }
+    }
+  },
+  "notDownloaded": "Not downloaded",
+  "downloadedCopy": "Downloaded",
+  "downloadPack": "Download pack",
+  "installedPack": "Installed pack version {version}",
+  "@installedPack": {
+    "placeholders": {
+      "version": { "type": "int" }
+    }
+  },
+  "packCheckFailed": "This pack could not be checked. The last checked pack stays on this device.",
   "downloadAction": "Download",
   "downloading": "Downloading",
   "downloadFailed": "The download did not finish. Try again.",

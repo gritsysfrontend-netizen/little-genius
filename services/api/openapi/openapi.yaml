@@ -66,6 +66,28 @@ paths:
               schema: { $ref: '#/components/schemas/Manifest' }
         '400': { $ref: '#/components/responses/Error' }
         '429': { $ref: '#/components/responses/Error' }
+  /content/packs/{packId}:
+    get:
+      operationId: getContentPack
+      security: []
+      parameters:
+        - name: packId
+          in: path
+          required: true
+          schema: { type: string, pattern: '^[a-z0-9._-]{1,80}$' }
+      responses:
+        '200':
+          description: Current published pack. The checksum covers items in position order.
+          headers:
+            Cache-Control: { schema: { type: string } }
+            ETag: { schema: { type: string } }
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ContentPack' }
+        '400': { $ref: '#/components/responses/Error' }
+        '404': { $ref: '#/components/responses/Error' }
+        '429': { $ref: '#/components/responses/Error' }
+        '500': { $ref: '#/components/responses/Error' }
   /content/{contentId}:
     get:
       operationId: getContentVersionPointer
@@ -298,12 +320,35 @@ components:
         contentVersion: { type: integer, minimum: 1 }
         schemaVersion: { type: string, enum: ['1.0'] }
         categoryId: { type: string }
-        interactionType: { type: string, enum: [tap_to_learn] }
+        interactionType:
+          type: string
+          enum: [tap_to_learn, single_choice, matching, sorting, counting, sequencing]
         title: { type: string }
         estimatedDurationSeconds: { type: integer, minimum: 1 }
         packId: { type: string }
         packVersion: { type: integer }
         payloadSha256: { type: string, pattern: '^[a-f0-9]{64}$' }
+    ContentPack:
+      type: object
+      additionalProperties: false
+      required: [packId, packVersion, checksumSha256, totalBytes, minAppVersion, items]
+      properties:
+        packId: { type: string }
+        packVersion: { type: integer, minimum: 1 }
+        checksumSha256: { type: string, pattern: '^[a-f0-9]{64}$' }
+        totalBytes: { type: integer, minimum: 0 }
+        minAppVersion: { type: string }
+        items:
+          type: array
+          items:
+            type: object
+            additionalProperties: false
+            required: [position, contentId, contentVersion, payloadSha256]
+            properties:
+              position: { type: integer, minimum: 0 }
+              contentId: { type: string }
+              contentVersion: { type: integer, minimum: 1 }
+              payloadSha256: { type: string, pattern: '^[a-f0-9]{64}$' }
     ContentPointer:
       type: object
       additionalProperties: false

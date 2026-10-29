@@ -121,6 +121,29 @@ class AppLocalizationsEn extends AppLocalizations {
   String get gentleRetry => 'Let\'s try again.';
 
   @override
+  String storageUsed(int bytes) {
+    return 'Storage used: $bytes bytes';
+  }
+
+  @override
+  String get notDownloaded => 'Not downloaded';
+
+  @override
+  String get downloadedCopy => 'Downloaded';
+
+  @override
+  String get downloadPack => 'Download pack';
+
+  @override
+  String installedPack(int version) {
+    return 'Installed pack version $version';
+  }
+
+  @override
+  String get packCheckFailed =>
+      'This pack could not be checked. The last checked pack stays on this device.';
+
+  @override
   String get downloadAction => 'Download';
 
   @override

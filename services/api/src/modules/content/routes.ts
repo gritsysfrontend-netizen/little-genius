@@ -7,6 +7,7 @@ import type { AppConfig } from '../../config.js';
 import { sendError } from '../../errors.js';
 import { contentIdSchema, manifestQuerySchema, versionSchema } from '../../schemas/lesson.js';
 import { monthsForBand, type AgeBand } from './age-band.js';
+import { catalogPackId, PackChecksumError, readPublishedPack } from './packs.js';
 import { signAssetUrl, verifyAssetSignature } from './signing.js';
 
 const idPattern = /^[a-z0-9._-]{1,80}$/;
@@ -48,7 +49,10 @@ export function registerContentRoutes(
         take: 101,
         include: {
           localizations: { where: { locale: parsed.data.locale } },
-          packItems: { orderBy: { position: 'asc' }, take: 1 },
+          packItems: {
+            where: { pack: { packId: catalogPackId, status: 'published' } },
+            take: 1,
+          },
         },
       });
       const page = rows.slice(0, 100);
@@ -77,6 +81,33 @@ export function registerContentRoutes(
         nextCursor,
       };
       return sendCanonical(reply, body, 'public, max-age=60');
+    },
+  );
+
+  app.get(
+    '/content/packs/:packId',
+    {
+      config: { rateLimit: { max: config.rateManifest, timeWindow: '1 minute' } },
+    },
+    async (request, reply) => {
+      const params = request.params as { packId?: string };
+      const packId = contentIdSchema.safeParse(params.packId);
+      if (!packId.success) {
+        return sendError(reply, 400, 'VALIDATION_ERROR', 'Pack id is not valid.', false);
+      }
+      try {
+        const pack = await readPublishedPack(prisma, packId.data);
+        if (!pack) {
+          return sendError(reply, 404, 'CONTENT_NOT_FOUND', 'Pack was not found.', false);
+        }
+        return sendCanonical(reply, pack, 'public, max-age=60');
+      } catch (error) {
+        if (error instanceof PackChecksumError) {
+          request.log.error({ packId: packId.data }, 'pack checksum mismatch');
+          return sendError(reply, 500, 'INTERNAL', 'Something went wrong.', true);
+        }
+        throw error;
+      }
     },
   );
 

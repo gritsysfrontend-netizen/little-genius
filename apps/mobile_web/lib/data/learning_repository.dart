@@ -20,6 +20,7 @@ abstract class LearningRepository {
   Future<void> saveBlob(StoredBlob blob);
   Future<StoredBlob?> getBlob(String assetId);
   Future<void> deleteBlob(String assetId);
+  Future<int> storageUsedBytes();
 
   Future<ApplyResult> applyEvent({
     required String profileId,
