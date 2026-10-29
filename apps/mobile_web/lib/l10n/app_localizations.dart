@@ -262,6 +262,60 @@ abstract class AppLocalizations {
   /// **'Animals'**
   String get animalsTitle;
 
+  /// No description provided for @colorsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Colors'**
+  String get colorsTitle;
+
+  /// No description provided for @pairsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Pairs'**
+  String get pairsTitle;
+
+  /// No description provided for @sizesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Sizes'**
+  String get sizesTitle;
+
+  /// No description provided for @numbersTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Numbers'**
+  String get numbersTitle;
+
+  /// No description provided for @routinesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Order'**
+  String get routinesTitle;
+
+  /// No description provided for @countMore.
+  ///
+  /// In en, this message translates to:
+  /// **'More'**
+  String get countMore;
+
+  /// No description provided for @countLess.
+  ///
+  /// In en, this message translates to:
+  /// **'Less'**
+  String get countLess;
+
+  /// No description provided for @countDone.
+  ///
+  /// In en, this message translates to:
+  /// **'Done'**
+  String get countDone;
+
+  /// No description provided for @gentleRetry.
+  ///
+  /// In en, this message translates to:
+  /// **'Let\'s try again.'**
+  String get gentleRetry;
+
   /// No description provided for @downloadAction.
   ///
   /// In en, this message translates to:

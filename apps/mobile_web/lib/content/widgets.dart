@@ -3,6 +3,8 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 
 import '../l10n/app_localizations.dart';
+import 'activity_views.dart';
+import 'lesson_interaction.dart';
 import 'lesson_parser.dart';
 
 class SafeFallback extends StatelessWidget {
@@ -50,6 +52,8 @@ class LessonRenderer extends StatelessWidget {
     required this.onReplay,
     this.onReplayOther,
     this.audioMissing = false,
+    this.locale = 'en',
+    this.onRetry,
   });
 
   final ParsedLesson lesson;
@@ -66,13 +70,15 @@ class LessonRenderer extends StatelessWidget {
   final VoidCallback onReplay;
   final VoidCallback? onReplayOther;
   final bool audioMissing;
+  final String locale;
+  final VoidCallback? onRetry;
 
   @override
   Widget build(BuildContext context) {
+    final retry = onRetry ?? _noop;
     return switch (lesson) {
-      SupportedLesson(:final document)
-          when document.interaction.type == 'tap_to_learn' =>
-        TapToLearnView(
+      SupportedLesson(:final document) => switch (document.interaction) {
+        TapToLearn() => TapToLearnView(
           instruction: instruction,
           secondaryTitle: secondaryTitle,
           feedback: feedback,
@@ -87,10 +93,92 @@ class LessonRenderer extends StatelessWidget {
           onReplayOther: onReplayOther,
           audioMissing: audioMissing,
         ),
-      _ => SafeFallback(onHome: onHome),
+        final SingleChoice interaction => SingleChoiceView(
+          interaction: interaction,
+          locale: locale,
+          instruction: instruction,
+          secondaryTitle: secondaryTitle,
+          feedback: feedback,
+          onSolved: onTarget,
+          onRetry: retry,
+          onHome: onHome,
+          onBack: onBack,
+          onPlay: onPlay,
+          onPause: onPause,
+          onReplay: onReplay,
+          onReplayOther: onReplayOther,
+          audioMissing: audioMissing,
+        ),
+        final MatchingPairs interaction => MatchingView(
+          interaction: interaction,
+          locale: locale,
+          instruction: instruction,
+          secondaryTitle: secondaryTitle,
+          feedback: feedback,
+          onSolved: onTarget,
+          onRetry: retry,
+          onHome: onHome,
+          onBack: onBack,
+          onPlay: onPlay,
+          onPause: onPause,
+          onReplay: onReplay,
+          onReplayOther: onReplayOther,
+          audioMissing: audioMissing,
+        ),
+        final SortingActivity interaction => SortingView(
+          interaction: interaction,
+          locale: locale,
+          instruction: instruction,
+          secondaryTitle: secondaryTitle,
+          feedback: feedback,
+          onSolved: onTarget,
+          onRetry: retry,
+          onHome: onHome,
+          onBack: onBack,
+          onPlay: onPlay,
+          onPause: onPause,
+          onReplay: onReplay,
+          onReplayOther: onReplayOther,
+          audioMissing: audioMissing,
+        ),
+        final CountingActivity interaction => CountingView(
+          interaction: interaction,
+          instruction: instruction,
+          secondaryTitle: secondaryTitle,
+          feedback: feedback,
+          onSolved: onTarget,
+          onRetry: retry,
+          onHome: onHome,
+          onBack: onBack,
+          onPlay: onPlay,
+          onPause: onPause,
+          onReplay: onReplay,
+          onReplayOther: onReplayOther,
+          audioMissing: audioMissing,
+        ),
+        final SequencingActivity interaction => SequencingView(
+          interaction: interaction,
+          locale: locale,
+          instruction: instruction,
+          secondaryTitle: secondaryTitle,
+          feedback: feedback,
+          onSolved: onTarget,
+          onRetry: retry,
+          onHome: onHome,
+          onBack: onBack,
+          onPlay: onPlay,
+          onPause: onPause,
+          onReplay: onReplay,
+          onReplayOther: onReplayOther,
+          audioMissing: audioMissing,
+        ),
+      },
+      UnsupportedLesson() => SafeFallback(onHome: onHome),
     };
   }
 }
+
+void _noop() {}
 
 class TapToLearnView extends StatelessWidget {
   const TapToLearnView({

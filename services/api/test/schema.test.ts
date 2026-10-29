@@ -40,6 +40,33 @@ test('zod accepts the elephant lesson and rejects hostile documents', () => {
   assert.match(schema.$schema, /2020-12/);
 });
 
+test('zod accepts each activity sample and rejects a label that drops a locale', () => {
+  const files = [
+    'color.red.001.json',
+    'pair.daynight.001.json',
+    'sort.bigsmall.001.json',
+    'count.birds.001.json',
+    'order.morning.001.json',
+  ];
+  for (const file of files) {
+    const lesson = JSON.parse(readFileSync(path.join(defaultFixtureDir(), file), 'utf8'));
+    assert.equal(lessonDocumentSchema.safeParse(lesson).success, true, file);
+  }
+  const red = JSON.parse(
+    readFileSync(path.join(defaultFixtureDir(), 'color.red.001.json'), 'utf8'),
+  ) as {
+    interaction: { choices: Array<{ label: Record<string, string> }> };
+    localizations: { en: { feedbackRetry?: string } };
+  };
+  const choice = red.interaction.choices[0];
+  assert.ok(choice);
+  delete choice.label.ta;
+  assert.equal(lessonDocumentSchema.safeParse(red).success, false);
+  choice.label.ta = 'சிவப்பு';
+  delete red.localizations.en.feedbackRetry;
+  assert.equal(lessonDocumentSchema.safeParse(red).success, false);
+});
+
 test('age bands overlap on the shared boundary month', () => {
   assert.deepEqual(monthsForBand('1-2'), [12, 24]);
   assert.deepEqual(monthsForBand('2-3'), [24, 36]);

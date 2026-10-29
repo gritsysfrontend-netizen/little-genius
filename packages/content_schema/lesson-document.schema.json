@@ -45,7 +45,16 @@
       "type": "array",
       "items": { "$ref": "#/$defs/assetRef" }
     },
-    "interaction": { "$ref": "#/$defs/tapToLearn" },
+    "interaction": {
+      "oneOf": [
+        { "$ref": "#/$defs/tapToLearn" },
+        { "$ref": "#/$defs/singleChoice" },
+        { "$ref": "#/$defs/matching" },
+        { "$ref": "#/$defs/sorting" },
+        { "$ref": "#/$defs/counting" },
+        { "$ref": "#/$defs/sequencing" }
+      ]
+    },
     "accessibility": { "$ref": "#/$defs/accessibility" }
   },
   "$defs": {
@@ -66,6 +75,7 @@
         "title": { "type": "string", "minLength": 1, "maxLength": 80 },
         "instruction": { "type": "string", "minLength": 1, "maxLength": 160 },
         "feedbackCorrect": { "type": "string", "minLength": 1, "maxLength": 80 },
+        "feedbackRetry": { "type": "string", "minLength": 1, "maxLength": 80 },
         "audio": {
           "type": "object",
           "additionalProperties": false,
@@ -94,6 +104,126 @@
         "targetAssetId": { "type": "string", "pattern": "^[a-z0-9._-]{1,80}$" },
         "completionRule": { "type": "string", "enum": ["target_tapped"] },
         "retryPolicy": { "type": "string", "enum": ["unlimited"] }
+      }
+    },
+    "localeText": {
+      "type": "object",
+      "additionalProperties": false,
+      "minProperties": 1,
+      "properties": {
+        "en": { "type": "string", "minLength": 1, "maxLength": 40 },
+        "hi": { "type": "string", "minLength": 1, "maxLength": 40 },
+        "ta": { "type": "string", "minLength": 1, "maxLength": 40 }
+      }
+    },
+    "singleChoice": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["type", "completionRule", "retryPolicy", "answerId", "choices"],
+      "properties": {
+        "type": { "const": "single_choice" },
+        "completionRule": { "const": "answer_selected" },
+        "retryPolicy": { "const": "unlimited" },
+        "answerId": { "type": "string", "pattern": "^[a-z0-9._-]{1,80}$" },
+        "choices": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 4,
+          "items": { "$ref": "#/$defs/labeledChoice" }
+        }
+      }
+    },
+    "matching": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["type", "completionRule", "retryPolicy", "pairs"],
+      "properties": {
+        "type": { "const": "matching" },
+        "completionRule": { "const": "all_pairs_matched" },
+        "retryPolicy": { "const": "unlimited" },
+        "pairs": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 4,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["id", "prompt", "match"],
+            "properties": {
+              "id": { "type": "string", "pattern": "^[a-z0-9._-]{1,80}$" },
+              "prompt": { "$ref": "#/$defs/localeText" },
+              "match": { "$ref": "#/$defs/localeText" }
+            }
+          }
+        }
+      }
+    },
+    "sorting": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["type", "completionRule", "retryPolicy", "bins", "items"],
+      "properties": {
+        "type": { "const": "sorting" },
+        "completionRule": { "const": "each_item_sorted" },
+        "retryPolicy": { "const": "unlimited" },
+        "bins": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 3,
+          "items": { "$ref": "#/$defs/labeledChoice" }
+        },
+        "items": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 4,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["id", "label", "binId"],
+            "properties": {
+              "id": { "type": "string", "pattern": "^[a-z0-9._-]{1,80}$" },
+              "label": { "$ref": "#/$defs/localeText" },
+              "binId": { "type": "string", "pattern": "^[a-z0-9._-]{1,80}$" }
+            }
+          }
+        }
+      }
+    },
+    "counting": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["type", "completionRule", "retryPolicy", "targetCount", "maxCount"],
+      "properties": {
+        "type": { "const": "counting" },
+        "completionRule": { "const": "count_matches" },
+        "retryPolicy": { "const": "unlimited" },
+        "targetCount": { "type": "integer", "minimum": 1, "maximum": 10 },
+        "maxCount": { "type": "integer", "minimum": 1, "maximum": 10 }
+      }
+    },
+    "sequencing": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["type", "completionRule", "retryPolicy", "steps"],
+      "properties": {
+        "type": { "const": "sequencing" },
+        "completionRule": { "const": "order_matches" },
+        "retryPolicy": { "const": "unlimited" },
+        "steps": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 6,
+          "items": { "$ref": "#/$defs/labeledChoice" }
+        }
+      }
+    },
+    "labeledChoice": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "label"],
+      "properties": {
+        "id": { "type": "string", "pattern": "^[a-z0-9._-]{1,80}$" },
+        "label": { "$ref": "#/$defs/localeText" }
       }
     },
     "accessibility": {

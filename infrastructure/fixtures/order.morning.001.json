@@ -1,0 +1,54 @@
+{
+  "schemaVersion": "1.0",
+  "contentId": "order.morning.001",
+  "contentVersion": 1,
+  "categoryId": "routines",
+  "ageRange": { "minMonths": 37, "maxMonths": 60 },
+  "learningObjectives": ["daily_order"],
+  "difficulty": 1,
+  "estimatedDurationSeconds": 50,
+  "localizations": {
+    "en": {
+      "title": "Morning order",
+      "instruction": "Tap them in order.",
+      "feedbackCorrect": "That is the order.",
+      "feedbackRetry": "Not the next one. Try again."
+    },
+    "hi": {
+      "title": "सुबह का क्रम",
+      "instruction": "उन्हें क्रम में टैप करें।",
+      "feedbackCorrect": "यही क्रम है।",
+      "feedbackRetry": "यह अगला नहीं है। फिर कोशिश करें।"
+    },
+    "ta": {
+      "title": "காலை வரிசை",
+      "instruction": "அவற்றை வரிசையில் தட்டுங்கள்.",
+      "feedbackCorrect": "இதுதான் வரிசை.",
+      "feedbackRetry": "இது அடுத்தது அல்ல. மீண்டும் முயலுங்கள்."
+    }
+  },
+  "assets": [],
+  "interaction": {
+    "type": "sequencing",
+    "completionRule": "order_matches",
+    "retryPolicy": "unlimited",
+    "steps": [
+      {
+        "id": "wake",
+        "label": { "en": "Wake", "hi": "जागें", "ta": "எழுந்திரு" }
+      },
+      {
+        "id": "eat",
+        "label": { "en": "Eat", "hi": "खाएँ", "ta": "சாப்பிடு" }
+      },
+      {
+        "id": "play",
+        "label": { "en": "Play", "hi": "खेलें", "ta": "விளையாடு" }
+      }
+    ]
+  },
+  "accessibility": {
+    "imageLabel": { "en": "Morning", "hi": "सुबह", "ta": "காலை" },
+    "requiresAudio": false
+  }
+}

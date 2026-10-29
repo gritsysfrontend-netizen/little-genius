@@ -1,0 +1,51 @@
+{
+  "schemaVersion": "1.0",
+  "contentId": "color.red.001",
+  "contentVersion": 1,
+  "categoryId": "colors",
+  "ageRange": { "minMonths": 12, "maxMonths": 23 },
+  "learningObjectives": ["color_names"],
+  "difficulty": 1,
+  "estimatedDurationSeconds": 40,
+  "localizations": {
+    "en": {
+      "title": "Red",
+      "instruction": "Which one is red?",
+      "feedbackCorrect": "Yes, that is red.",
+      "feedbackRetry": "Let's look again."
+    },
+    "hi": {
+      "title": "लाल",
+      "instruction": "कौन सा लाल है?",
+      "feedbackCorrect": "हाँ, यह लाल है।",
+      "feedbackRetry": "फिर से देखें।"
+    },
+    "ta": {
+      "title": "சிவப்பு",
+      "instruction": "எது சிவப்பு?",
+      "feedbackCorrect": "ஆம், இது சிவப்பு.",
+      "feedbackRetry": "மீண்டும் பாருங்கள்."
+    }
+  },
+  "assets": [],
+  "interaction": {
+    "type": "single_choice",
+    "completionRule": "answer_selected",
+    "retryPolicy": "unlimited",
+    "answerId": "red",
+    "choices": [
+      {
+        "id": "red",
+        "label": { "en": "Red", "hi": "लाल", "ta": "சிவப்பு" }
+      },
+      {
+        "id": "blue",
+        "label": { "en": "Blue", "hi": "नीला", "ta": "நீலம்" }
+      }
+    ]
+  },
+  "accessibility": {
+    "imageLabel": { "en": "Red", "hi": "लाल", "ta": "சிவப்பு" },
+    "requiresAudio": false
+  }
+}

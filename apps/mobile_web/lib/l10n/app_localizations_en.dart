@@ -94,6 +94,33 @@ class AppLocalizationsEn extends AppLocalizations {
   String get animalsTitle => 'Animals';
 
   @override
+  String get colorsTitle => 'Colors';
+
+  @override
+  String get pairsTitle => 'Pairs';
+
+  @override
+  String get sizesTitle => 'Sizes';
+
+  @override
+  String get numbersTitle => 'Numbers';
+
+  @override
+  String get routinesTitle => 'Order';
+
+  @override
+  String get countMore => 'More';
+
+  @override
+  String get countLess => 'Less';
+
+  @override
+  String get countDone => 'Done';
+
+  @override
+  String get gentleRetry => 'Let\'s try again.';
+
+  @override
   String get downloadAction => 'Download';
 
   @override

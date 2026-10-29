@@ -14,6 +14,7 @@ import '../common/app_status.dart';
 import '../common/page_frame.dart';
 import '../common/status_message.dart';
 import 'catalog.dart';
+import 'category_titles.dart';
 
 class CategoryScreen extends ConsumerStatefulWidget {
   const CategoryScreen({super.key, required this.categoryId});
@@ -64,6 +65,8 @@ class _CategoryScreenState extends ConsumerState<CategoryScreen> {
         manifest: manifest,
         manifestFailed: failed,
         localById: local,
+        ageBand: profile.ageBand,
+        locale: profile.preferredLocale,
       );
       _entries = [
         for (final entry in _entries)
@@ -100,9 +103,7 @@ class _CategoryScreenState extends ConsumerState<CategoryScreen> {
     ref.listen(downloadProvider, (previous, next) {
       if (next.phase == DownloadPhase.saved) _load();
     });
-    final title = widget.categoryId == animalsCategoryId
-        ? text.animalsTitle
-        : widget.categoryId;
+    final title = categoryLabel(text, widget.categoryId);
     return PageFrame(
       onBack: () => context.go('/'),
       onHome: () => context.go('/'),

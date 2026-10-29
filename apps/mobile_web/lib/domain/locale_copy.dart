@@ -17,12 +17,14 @@ class LocalizedCopy {
     required this.title,
     required this.instruction,
     required this.feedbackCorrect,
+    this.feedbackRetry,
     this.instructionAssetId,
   });
 
   final String title;
   final String instruction;
   final String feedbackCorrect;
+  final String? feedbackRetry;
   final String? instructionAssetId;
 }
 

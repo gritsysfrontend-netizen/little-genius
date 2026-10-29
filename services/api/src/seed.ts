@@ -18,28 +18,67 @@ export function defaultSchemaPath(): string {
   return path.resolve(process.cwd(), '../../packages/content_schema/lesson-document.schema.json');
 }
 
+const activityLessons = [
+  'color.red.001.json',
+  'pair.daynight.001.json',
+  'sort.bigsmall.001.json',
+  'count.birds.001.json',
+  'order.morning.001.json',
+];
+
+type AssetChecksum = { file: string; sha256: string; bytes: number };
+
 export async function seedDatabase(
   prisma: PrismaClient,
   fixtureDir: string,
   schemaPath: string,
 ): Promise<void> {
-  const lessonPath = path.join(fixtureDir, 'animal.elephant.001.json');
-  const checksumPath = path.join(fixtureDir, 'checksums.json');
-  const raw = JSON.parse(readFileSync(lessonPath, 'utf8')) as unknown;
-  const checksums = JSON.parse(readFileSync(checksumPath, 'utf8')) as {
-    payloadSha256: string;
-    assets: Record<string, { file: string; sha256: string; bytes: number }>;
-  };
+  const elephantChecksums = JSON.parse(
+    readFileSync(path.join(fixtureDir, 'checksums.json'), 'utf8'),
+  ) as { payloadSha256: string; assets: Record<string, AssetChecksum> };
+  const activityChecksums = JSON.parse(
+    readFileSync(path.join(fixtureDir, 'activity-checksums.json'), 'utf8'),
+  ) as Record<string, string>;
+  await publishLesson(prisma, fixtureDir, schemaPath, {
+    fileName: 'animal.elephant.001.json',
+    expectedHash: elephantChecksums.payloadSha256,
+    assets: elephantChecksums.assets,
+    withPack: true,
+  });
+  for (const fileName of activityLessons) {
+    const contentId = fileName.replace(/\.json$/, '');
+    const expectedHash = activityChecksums[contentId];
+    if (!expectedHash) throw new Error(`missing checksum for ${contentId}`);
+    await publishLesson(prisma, fixtureDir, schemaPath, {
+      fileName,
+      expectedHash,
+      assets: null,
+      withPack: false,
+    });
+  }
+}
+
+async function publishLesson(
+  prisma: PrismaClient,
+  fixtureDir: string,
+  schemaPath: string,
+  input: {
+    fileName: string;
+    expectedHash: string;
+    assets: Record<string, AssetChecksum> | null;
+    withPack: boolean;
+  },
+): Promise<void> {
+  const raw = JSON.parse(readFileSync(path.join(fixtureDir, input.fileName), 'utf8')) as unknown;
   assertSchema(raw, schemaPath);
   const parsed = lessonDocumentSchema.parse(raw);
   const canonical = canonicalJson(parsed);
   const payloadSha256 = sha256Hex(canonical);
-  if (payloadSha256 !== checksums.payloadSha256) {
-    throw new Error('lesson payload sha256 does not match checksums.json');
+  if (payloadSha256 !== input.expectedHash) {
+    throw new Error(`${parsed.contentId} payload sha256 does not match the recorded checksum`);
   }
-
   const assetRows = parsed.assets.map((asset) => {
-    const recorded = checksums.assets[asset.assetId];
+    const recorded = input.assets?.[asset.assetId];
     if (!recorded || recorded.sha256 !== asset.sha256) {
       throw new Error(`missing checksum for ${asset.assetId}`);
     }
@@ -50,9 +89,13 @@ export async function seedDatabase(
     }
     return { asset, recorded, byteSize: bytes.length };
   });
-
   const existing = await prisma.contentVersion.findUnique({
-    where: { contentId_contentVersion: { contentId: parsed.contentId, contentVersion: 1 } },
+    where: {
+      contentId_contentVersion: {
+        contentId: parsed.contentId,
+        contentVersion: parsed.contentVersion,
+      },
+    },
   });
   if (existing) {
     if (existing.payloadSha256 !== payloadSha256 || existing.status !== 'published') {
@@ -60,11 +103,9 @@ export async function seedDatabase(
     }
     return;
   }
-
   const packMaterial = `${parsed.contentId}:${parsed.contentVersion}\n`;
   const totalBytes =
     assetRows.reduce((sum, row) => sum + row.byteSize, 0) + Buffer.byteLength(canonical);
-
   await prisma.$transaction(async (tx) => {
     await tx.contentVersion.create({
       data: {
@@ -80,7 +121,6 @@ export async function seedDatabase(
         payloadSha256,
       },
     });
-
     for (const [locale, copy] of Object.entries(parsed.localizations)) {
       if (!copy) continue;
       await tx.contentLocalization.create({
@@ -95,7 +135,6 @@ export async function seedDatabase(
         },
       });
     }
-
     for (const row of assetRows) {
       await tx.mediaAsset.upsert({
         where: { assetId: row.asset.assetId },
@@ -118,7 +157,7 @@ export async function seedDatabase(
         },
       });
     }
-
+    if (!input.withPack) return;
     await tx.contentPack.create({
       data: {
         packId,

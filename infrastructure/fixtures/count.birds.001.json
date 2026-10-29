@@ -1,0 +1,42 @@
+{
+  "schemaVersion": "1.0",
+  "contentId": "count.birds.001",
+  "contentVersion": 1,
+  "categoryId": "numbers",
+  "ageRange": { "minMonths": 49, "maxMonths": 60 },
+  "learningObjectives": ["count_to_three"],
+  "difficulty": 1,
+  "estimatedDurationSeconds": 40,
+  "localizations": {
+    "en": {
+      "title": "Three birds",
+      "instruction": "Count three birds.",
+      "feedbackCorrect": "That is three.",
+      "feedbackRetry": "Not three yet. Try again."
+    },
+    "hi": {
+      "title": "तीन चिड़ियाँ",
+      "instruction": "तीन चिड़ियाँ गिनें।",
+      "feedbackCorrect": "यह तीन हैं।",
+      "feedbackRetry": "अभी तीन नहीं। फिर कोशिश करें।"
+    },
+    "ta": {
+      "title": "மூன்று பறவைகள்",
+      "instruction": "மூன்று பறவைகளை எண்ணுங்கள்.",
+      "feedbackCorrect": "இது மூன்று.",
+      "feedbackRetry": "இன்னும் மூன்று இல்லை. மீண்டும் முயலுங்கள்."
+    }
+  },
+  "assets": [],
+  "interaction": {
+    "type": "counting",
+    "completionRule": "count_matches",
+    "retryPolicy": "unlimited",
+    "targetCount": 3,
+    "maxCount": 5
+  },
+  "accessibility": {
+    "imageLabel": { "en": "Birds", "hi": "चिड़ियाँ", "ta": "பறவைகள்" },
+    "requiresAudio": false
+  }
+}

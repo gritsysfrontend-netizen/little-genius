@@ -58,4 +58,89 @@ void main() {
     expect(entries.single.updateAvailable, isFalse);
     expect(entries.single.downloaded, isTrue);
   });
+
+  test('age bands keep only the lessons that overlap', () {
+    expect(categoriesFor(ageBand: '1-2', locale: 'en', localById: const {}), [
+      'animals',
+      'colors',
+    ]);
+    expect(categoriesFor(ageBand: '2-3', locale: 'en', localById: const {}), [
+      'animals',
+      'pairs',
+    ]);
+    expect(categoriesFor(ageBand: '3-4', locale: 'en', localById: const {}), [
+      'animals',
+      'sizes',
+      'routines',
+    ]);
+    expect(categoriesFor(ageBand: '4-5', locale: 'en', localById: const {}), [
+      'animals',
+      'numbers',
+      'routines',
+    ]);
+    final older = entriesForCategory(
+      categoryId: 'numbers',
+      manifest: const [],
+      manifestFailed: true,
+      localById: const {},
+      ageBand: '4-5',
+      locale: 'en',
+    );
+    expect(older.single.contentId, 'count.birds.001');
+    expect(
+      entriesForCategory(
+        categoryId: 'colors',
+        manifest: const [],
+        manifestFailed: true,
+        localById: const {},
+        ageBand: '4-5',
+        locale: 'en',
+      ),
+      isEmpty,
+    );
+  });
+
+  test('a saved copy without English is hidden for English', () {
+    const tamilOnly = StoredDocument(
+      contentId: 'color.red.001',
+      contentVersion: 1,
+      payload: '{"contentId":"color.red.001","categoryId":"colors","ageRange":{"minMonths":12,"maxMonths":23},"localizations":{"ta":{"title":"சிவப்பு"}}}',
+      payloadSha256: 'tamil',
+    );
+    const listed = ManifestItem(
+      contentId: 'color.red.001',
+      contentVersion: 1,
+      categoryId: 'colors',
+      title: 'Red',
+      payloadSha256: 'remote',
+    );
+    expect(
+      entriesForCategory(
+        categoryId: 'colors',
+        manifest: const [listed],
+        manifestFailed: false,
+        localById: const {'color.red.001': tamilOnly},
+        ageBand: '1-2',
+        locale: 'en',
+      ),
+      isEmpty,
+    );
+    final tamil = entriesForCategory(
+      categoryId: 'colors',
+      manifest: const [listed],
+      manifestFailed: false,
+      localById: const {'color.red.001': tamilOnly},
+      ageBand: '1-2',
+      locale: 'ta',
+    );
+    expect(tamil.single.title, 'சிவப்பு');
+    expect(
+      categoriesFor(
+        ageBand: '1-2',
+        locale: 'en',
+        localById: const {'color.red.001': tamilOnly},
+      ),
+      ['animals'],
+    );
+  });
 }

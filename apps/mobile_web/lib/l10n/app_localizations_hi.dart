@@ -94,6 +94,33 @@ class AppLocalizationsHi extends AppLocalizations {
   String get animalsTitle => 'जानवर';
 
   @override
+  String get colorsTitle => 'रंग';
+
+  @override
+  String get pairsTitle => 'जोड़े';
+
+  @override
+  String get sizesTitle => 'आकार';
+
+  @override
+  String get numbersTitle => 'संख्या';
+
+  @override
+  String get routinesTitle => 'क्रम';
+
+  @override
+  String get countMore => 'और';
+
+  @override
+  String get countLess => 'कम';
+
+  @override
+  String get countDone => 'हो गया';
+
+  @override
+  String get gentleRetry => 'फिर से कोशिश करें।';
+
+  @override
   String get downloadAction => 'डाउनलोड';
 
   @override
