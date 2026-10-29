@@ -86,6 +86,7 @@ test('phase 5 profile schemas are documented and not routed', () => {
     'getHealth',
     'getReady',
     'getContentManifest',
+    'getContentPack',
     'getContentVersionPointer',
     'getLessonDocument',
     'getAssetDescriptor',

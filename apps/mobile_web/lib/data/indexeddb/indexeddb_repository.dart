@@ -181,6 +181,21 @@ class IndexedDbLearningRepository implements LearningRepository {
   Future<void> deleteBlob(String assetId) => _delete('blobs', assetId);
 
   @override
+  Future<int> storageUsedBytes() async {
+    var total = 0;
+    for (final raw in await _all('documents')) {
+      total += utf8.encode(_document(raw).payload).length;
+    }
+    for (final raw in await _all('blobs')) {
+      final json = _map(jsonDecode(raw));
+      final encoded = json['base64'];
+      if (encoded is! String) continue;
+      total += base64Decode(encoded).length;
+    }
+    return total;
+  }
+
+  @override
   Future<ApplyResult> applyEvent({
     required String profileId,
     required String categoryId,

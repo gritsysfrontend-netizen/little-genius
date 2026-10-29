@@ -1,15 +1,21 @@
+import 'dart:convert';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../content/widgets.dart';
+import '../../data/content_api.dart';
+import '../../data/downloader.dart';
+import '../../domain/content_pack.dart';
 import '../../domain/session_timer.dart';
 import '../../l10n/app_localizations.dart';
 import '../../routing/providers.dart';
 import '../common/app_status.dart';
 import '../common/page_frame.dart';
 import '../common/status_message.dart';
+import 'download_manager.dart';
 
 class ParentHomeScreen extends ConsumerWidget {
   const ParentHomeScreen({super.key});
@@ -150,7 +156,8 @@ class DownloadsScreen extends ConsumerStatefulWidget {
 }
 
 class _DownloadsScreenState extends ConsumerState<DownloadsScreen> {
-  var _titles = const <String>[];
+  DownloadManagerSnapshot? _snapshot;
+  var _loading = true;
 
   @override
   void initState() {
@@ -159,19 +166,52 @@ class _DownloadsScreenState extends ConsumerState<DownloadsScreen> {
   }
 
   Future<void> _load() async {
-    final documents = await ref.read(repositoryProvider).listDocuments();
+    final repository = ref.read(repositoryProvider);
+    final documents = await repository.listDocuments();
+    final storage = await repository.storageUsedBytes();
+    final installed = await repository.getSetting(publishedPackSettingKey);
+    String? fetched;
+    var failed = false;
+    try {
+      final bytes = await ref
+          .read(byteSourceProvider)
+          .get(
+            Uri.parse('$apiBaseUrl/api/v1/content/packs/$catalogPackId'),
+            DownloadCancelToken(),
+          );
+      fetched = utf8.decode(bytes);
+    } catch (_) {
+      failed = true;
+    }
     if (!mounted) return;
     setState(() {
-      _titles = [
-        for (final document in documents)
-          '${document.contentId} ${document.contentVersion}',
-      ];
+      _loading = false;
+      _snapshot = describeDownloads(
+        storageBytes: storage,
+        installedJson: installed,
+        fetchedJson: fetched,
+        fetchFailed: failed,
+        documents: documents,
+      );
     });
   }
 
   @override
   Widget build(BuildContext context) {
     final text = AppLocalizations.of(context);
+    final download = ref.watch(downloadProvider);
+    ref.listen(downloadProvider, (previous, next) {
+      if (next.phase == DownloadPhase.saved) _load();
+    });
+    final snapshot = _snapshot;
+    final busy =
+        download.contentId == catalogPackId &&
+        (download.phase == DownloadPhase.downloading ||
+            download.phase == DownloadPhase.retrying);
+    final failedPack =
+        download.contentId == catalogPackId &&
+        (download.phase == DownloadPhase.failed ||
+            download.phase == DownloadPhase.checksum);
     return PageFrame(
       orderedFocus: true,
       onBack: () => context.go('/parent'),
@@ -187,11 +227,74 @@ class _DownloadsScreenState extends ConsumerState<DownloadsScreen> {
           Text(text.accountNotAvailable),
           if (kIsWeb) ...[const SizedBox(height: 8), Text(text.webStorageNote)],
           const SizedBox(height: 12),
-          if (_titles.isEmpty) ...[
-            const StatusMessage(status: AppStatus.empty),
-            Text(text.downloadFirst),
+          if (_loading) const StatusMessage(status: AppStatus.loading),
+          if (snapshot != null) ...[
+            Text(
+              text.storageUsed(snapshot.storageBytes),
+              key: const Key('storage-used'),
+            ),
+            if (snapshot.installedPackVersion != null)
+              Text(
+                text.installedPack(snapshot.installedPackVersion!),
+                key: const Key('installed-pack'),
+              ),
+            if (snapshot.offline)
+              const StatusMessage(status: AppStatus.offline),
+            if (snapshot.checksumRejected)
+              StatusMessage(
+                status: AppStatus.recoverableError,
+                message: text.packCheckFailed,
+              ),
+            if (download.phase == DownloadPhase.downloading &&
+                download.contentId == catalogPackId)
+              const StatusMessage(status: AppStatus.downloading),
+            if (download.phase == DownloadPhase.retrying &&
+                download.contentId == catalogPackId)
+              const StatusMessage(status: AppStatus.retrying),
+            if (download.phase == DownloadPhase.failed &&
+                download.contentId == catalogPackId)
+              const StatusMessage(status: AppStatus.downloadFailed),
+            if (download.phase == DownloadPhase.checksum &&
+                download.contentId == catalogPackId)
+              StatusMessage(
+                status: AppStatus.recoverableError,
+                message: text.checksumError,
+              ),
+            const SizedBox(height: 12),
+            for (final lesson in snapshot.lessons) ...[
+              Text(lesson.contentId),
+              Text(
+                lesson.downloaded ? text.downloadedCopy : text.notDownloaded,
+                key: Key(
+                  lesson.downloaded
+                      ? 'downloaded-${lesson.contentId}'
+                      : 'not-downloaded-${lesson.contentId}',
+                ),
+              ),
+              const SizedBox(height: 8),
+            ],
+            BigButton(
+              key: const Key('download-pack'),
+              focusOrder: 3,
+              label: failedPack ? text.retry : text.downloadPack,
+              icon: Icons.download,
+              onPressed: busy
+                  ? null
+                  : () => ref
+                        .read(downloadProvider.notifier)
+                        .startPack(catalogPackId),
+            ),
+            if (busy) ...[
+              const SizedBox(height: 12),
+              BigButton(
+                key: const Key('cancel-pack'),
+                focusOrder: 4,
+                label: text.cancel,
+                icon: Icons.close,
+                onPressed: () => ref.read(downloadProvider.notifier).cancel(),
+              ),
+            ],
           ],
-          for (final title in _titles) Text(title),
         ],
       ),
     );

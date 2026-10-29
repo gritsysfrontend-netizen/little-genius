@@ -121,6 +121,29 @@ class AppLocalizationsHi extends AppLocalizations {
   String get gentleRetry => 'फिर से कोशिश करें।';
 
   @override
+  String storageUsed(int bytes) {
+    return 'उपयोग की जगह: $bytes बाइट';
+  }
+
+  @override
+  String get notDownloaded => 'डाउनलोड नहीं हुआ';
+
+  @override
+  String get downloadedCopy => 'डाउनलोड हो चुका';
+
+  @override
+  String get downloadPack => 'पैक डाउनलोड करें';
+
+  @override
+  String installedPack(int version) {
+    return 'स्थापित पैक संस्करण $version';
+  }
+
+  @override
+  String get packCheckFailed =>
+      'यह पैक जाँचा नहीं जा सका। आखिरी जाँचा हुआ पैक इसी डिवाइस पर रहता है।';
+
+  @override
   String get downloadAction => 'डाउनलोड';
 
   @override

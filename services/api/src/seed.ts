@@ -6,6 +6,7 @@ import { Ajv2020 } from 'ajv/dist/2020.js';
 import addFormats from 'ajv-formats';
 import { canonicalJson, sha256Hex } from './canonical.js';
 import { loadConfig } from './config.js';
+import { ensureCatalogPack } from './modules/content/packs.js';
 import { lessonDocumentSchema } from './schemas/lesson.js';
 
 const packId = 'pack.animal.elephant.001';
@@ -56,6 +57,7 @@ export async function seedDatabase(
       withPack: false,
     });
   }
+  await ensureCatalogPack(prisma);
 }
 
 async function publishLesson(

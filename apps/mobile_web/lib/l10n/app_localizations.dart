@@ -316,6 +316,42 @@ abstract class AppLocalizations {
   /// **'Let\'s try again.'**
   String get gentleRetry;
 
+  /// No description provided for @storageUsed.
+  ///
+  /// In en, this message translates to:
+  /// **'Storage used: {bytes} bytes'**
+  String storageUsed(int bytes);
+
+  /// No description provided for @notDownloaded.
+  ///
+  /// In en, this message translates to:
+  /// **'Not downloaded'**
+  String get notDownloaded;
+
+  /// No description provided for @downloadedCopy.
+  ///
+  /// In en, this message translates to:
+  /// **'Downloaded'**
+  String get downloadedCopy;
+
+  /// No description provided for @downloadPack.
+  ///
+  /// In en, this message translates to:
+  /// **'Download pack'**
+  String get downloadPack;
+
+  /// No description provided for @installedPack.
+  ///
+  /// In en, this message translates to:
+  /// **'Installed pack version {version}'**
+  String installedPack(int version);
+
+  /// No description provided for @packCheckFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'This pack could not be checked. The last checked pack stays on this device.'**
+  String get packCheckFailed;
+
   /// No description provided for @downloadAction.
   ///
   /// In en, this message translates to:

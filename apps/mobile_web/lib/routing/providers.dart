@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../content/lesson_audio.dart';
 import '../data/downloader.dart';
+import '../data/pack_downloader.dart';
 import '../data/learning_repository.dart';
 import '../domain/gate_policy.dart';
 import '../domain/playback.dart';
@@ -157,6 +158,25 @@ class DownloadController extends Notifier<DownloadState> {
     ).download(contentId: contentId, token: token);
     if (!identical(_token, token)) return;
     state = DownloadState(phase: _phase(outcome.status), contentId: contentId);
+  }
+
+  Future<void> startPack(String packId) async {
+    _token?.cancel();
+    final token = DownloadCancelToken();
+    final retry =
+        state.phase == DownloadPhase.failed ||
+        state.phase == DownloadPhase.checksum;
+    _token = token;
+    state = DownloadState(
+      phase: retry ? DownloadPhase.retrying : DownloadPhase.downloading,
+      contentId: packId,
+    );
+    final outcome = await PackDownloader(
+      source: ref.read(byteSourceProvider),
+      repository: ref.read(repositoryProvider),
+    ).download(packId: packId, token: token);
+    if (!identical(_token, token)) return;
+    state = DownloadState(phase: _phase(outcome.status), contentId: packId);
   }
 
   void cancel() {

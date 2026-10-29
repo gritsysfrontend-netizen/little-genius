@@ -121,6 +121,29 @@ class AppLocalizationsTa extends AppLocalizations {
   String get gentleRetry => 'மீண்டும் முயலுங்கள்.';
 
   @override
+  String storageUsed(int bytes) {
+    return 'பயன்படுத்திய இடம்: $bytes பைட்டுகள்';
+  }
+
+  @override
+  String get notDownloaded => 'பதிவிறக்கப்படவில்லை';
+
+  @override
+  String get downloadedCopy => 'பதிவிறக்கப்பட்டது';
+
+  @override
+  String get downloadPack => 'தொகுப்பைப் பதிவிறக்குங்கள்';
+
+  @override
+  String installedPack(int version) {
+    return 'நிறுவப்பட்ட தொகுப்பு பதிப்பு $version';
+  }
+
+  @override
+  String get packCheckFailed =>
+      'இந்தத் தொகுப்பைச் சரிபார்க்க முடியவில்லை. கடைசியாகச் சரிபார்த்த தொகுப்பு இந்தச் சாதனத்தில் இருக்கும்.';
+
+  @override
   String get downloadAction => 'பதிவிறக்கம்';
 
   @override
