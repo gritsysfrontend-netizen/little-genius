@@ -276,6 +276,7 @@ components:
               type: string
               enum:
                 - UNAUTHENTICATED
+                - FORBIDDEN
                 - VALIDATION_ERROR
                 - PROFILE_NOT_FOUND
                 - CONTENT_NOT_FOUND

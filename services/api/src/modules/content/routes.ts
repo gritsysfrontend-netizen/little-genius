@@ -199,7 +199,7 @@ export function registerContentRoutes(
       if (!params.assetId || !idPattern.test(params.assetId)) {
         return sendError(reply, 400, 'VALIDATION_ERROR', 'Asset id is not valid.', false);
       }
-      const asset = await prisma.mediaAsset.findUnique({ where: { assetId: params.assetId } });
+      const asset = await publishedAsset(prisma, params.assetId);
       if (!asset) {
         return sendError(reply, 404, 'ASSET_NOT_FOUND', 'Asset was not found.', false);
       }
@@ -236,9 +236,19 @@ export function registerContentRoutes(
       if (!ok) {
         return sendError(reply, 404, 'ASSET_NOT_FOUND', 'Asset was not found.', false);
       }
-      const asset = await prisma.mediaAsset.findUnique({ where: { assetId: params.assetId } });
+      const asset = await publishedAsset(prisma, params.assetId);
       if (!asset) {
         return sendError(reply, 404, 'ASSET_NOT_FOUND', 'Asset was not found.', false);
+      }
+      if (asset.objectKey === 'upload') {
+        const blob = await prisma.mediaAssetBlob.findUnique({ where: { assetId: asset.assetId } });
+        if (!blob) {
+          return sendError(reply, 404, 'ASSET_NOT_FOUND', 'Asset was not found.', false);
+        }
+        return reply
+          .header('Cache-Control', 'private, max-age=0')
+          .type(blob.contentType)
+          .send(Buffer.from(blob.bytes));
       }
       const filePath = path.join(config.fixtureDir, asset.objectKey);
       const type =
@@ -253,6 +263,16 @@ export function registerContentRoutes(
         .send(createReadStream(filePath));
     },
   );
+}
+
+async function publishedAsset(prisma: PrismaClient, assetId: string) {
+  const asset = await prisma.mediaAsset.findUnique({ where: { assetId } });
+  if (!asset) return null;
+  const referenced = await prisma.contentAssetRef.findFirst({
+    where: { assetId, version: { status: 'published' } },
+  });
+  if (!referenced) return null;
+  return asset;
 }
 
 function sendCanonical(

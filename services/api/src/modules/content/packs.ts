@@ -75,7 +75,11 @@ export async function publishNextPackVersion(
       where: { packId, status: 'published' },
       orderBy: { packVersion: 'desc' },
     });
-    const nextVersion = (current?.packVersion ?? 0) + 1;
+    const latest = await tx.contentPack.findFirst({
+      where: { packId },
+      orderBy: { packVersion: 'desc' },
+    });
+    const nextVersion = (latest?.packVersion ?? 0) + 1;
     if (current) {
       await tx.contentPack.update({
         where: { packId_packVersion: { packId, packVersion: current.packVersion } },

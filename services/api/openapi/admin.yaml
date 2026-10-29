@@ -1,0 +1,161 @@
+openapi: 3.0.3
+info:
+  title: Little Genius content admin
+  version: 0.1.0
+  description: >
+    Staff routes. A staff token with an MFA claim is required on every call.
+    Hiding a control in the staff page is not authorization. Parent tokens are
+    rejected. This file is not the public content API. The identity provider in
+    this slice is a test double, not a Cognito account.
+servers:
+  - url: http://127.0.0.1:3000/admin/v1
+paths:
+  /drafts:
+    get:
+      operationId: listDrafts
+      security: [{ staffToken: [] }]
+      responses:
+        '200': { description: Draft list. }
+        '401': { $ref: '#/components/responses/Error' }
+        '403': { $ref: '#/components/responses/Error' }
+    post:
+      operationId: createDraft
+      security: [{ staffToken: [] }]
+      responses:
+        '201': { description: Draft saved. The author role is required. }
+        '401': { $ref: '#/components/responses/Error' }
+        '403': { $ref: '#/components/responses/Error' }
+  /drafts/{draftId}:
+    get:
+      operationId: getDraft
+      security: [{ staffToken: [] }]
+      parameters:
+        - $ref: '#/components/parameters/DraftId'
+      responses:
+        '200': { description: Draft, three-locale copy, and review status. }
+        '401': { $ref: '#/components/responses/Error' }
+        '403': { $ref: '#/components/responses/Error' }
+    patch:
+      operationId: updateDraft
+      security: [{ staffToken: [] }]
+      parameters:
+        - $ref: '#/components/parameters/DraftId'
+      responses:
+        '200': { description: Draft updated. Reviews return to pending. }
+        '401': { $ref: '#/components/responses/Error' }
+        '403': { $ref: '#/components/responses/Error' }
+  /assets:
+    post:
+      operationId: uploadAsset
+      security: [{ staffToken: [] }]
+      responses:
+        '201':
+          description: >
+            jpeg, png, webp, mpeg, or aac bytes stored. svg, html, and javascript
+            are rejected.
+        '400': { $ref: '#/components/responses/Error' }
+        '401': { $ref: '#/components/responses/Error' }
+        '403': { $ref: '#/components/responses/Error' }
+  /drafts/{draftId}/reviews/education:
+    post:
+      operationId: reviewEducation
+      security: [{ staffToken: [] }]
+      parameters:
+        - $ref: '#/components/parameters/DraftId'
+      responses:
+        '200': { description: Education review recorded by someone other than the author. }
+        '403': { $ref: '#/components/responses/Error' }
+  /drafts/{draftId}/reviews/rights:
+    post:
+      operationId: reviewRights
+      security: [{ staffToken: [] }]
+      parameters:
+        - $ref: '#/components/parameters/DraftId'
+      responses:
+        '200': { description: Rights review recorded by someone other than the author. }
+        '403': { $ref: '#/components/responses/Error' }
+  /drafts/{draftId}/reviews/language:
+    post:
+      operationId: reviewLanguage
+      security: [{ staffToken: [] }]
+      parameters:
+        - $ref: '#/components/parameters/DraftId'
+      responses:
+        '200': { description: Native-language review for en, hi, or ta. }
+        '403': { $ref: '#/components/responses/Error' }
+  /drafts/{draftId}/publish:
+    post:
+      operationId: publishDraft
+      security: [{ staffToken: [] }]
+      parameters:
+        - $ref: '#/components/parameters/DraftId'
+      responses:
+        '200': { description: Immutable published version. The publisher role is required. }
+        '400': { $ref: '#/components/responses/Error' }
+        '403': { $ref: '#/components/responses/Error' }
+  /content/{contentId}/unpublish:
+    post:
+      operationId: unpublishContent
+      security: [{ staffToken: [] }]
+      parameters:
+        - $ref: '#/components/parameters/ContentId'
+      responses:
+        '200': { description: Published version marked unpublished. Payload bytes stay. }
+        '403': { $ref: '#/components/responses/Error' }
+  /audit:
+    get:
+      operationId: listAudit
+      security: [{ staffToken: [] }]
+      responses:
+        '200': { description: Audit log. Publisher or administrator role. }
+        '403': { $ref: '#/components/responses/Error' }
+components:
+  securitySchemes:
+    staffToken:
+      type: http
+      scheme: bearer
+      description: >
+        Staff access token. The API rejects the call when the MFA claim is
+        absent. This slice verifies tokens with a test double, not Cognito.
+  parameters:
+    DraftId:
+      name: draftId
+      in: path
+      required: true
+      schema: { type: string, format: uuid }
+    ContentId:
+      name: contentId
+      in: path
+      required: true
+      schema: { type: string, pattern: '^[a-z0-9._-]{1,80}$' }
+  responses:
+    Error:
+      description: Error body.
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required: [error]
+            properties:
+              error:
+                type: object
+                additionalProperties: false
+                required: [code, message, requestId, retryable]
+                properties:
+                  code:
+                    type: string
+                    enum:
+                      [
+                        UNAUTHENTICATED,
+                        FORBIDDEN,
+                        VALIDATION_ERROR,
+                        CONTENT_NOT_FOUND,
+                        REVISION_CONFLICT,
+                        PAYLOAD_TOO_LARGE,
+                        RATE_LIMITED,
+                        INTERNAL,
+                      ]
+                  message: { type: string, maxLength: 200 }
+                  requestId: { type: string }
+                  retryable: { type: boolean }

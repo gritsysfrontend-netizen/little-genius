@@ -24,6 +24,8 @@ const config: AppConfig = {
   rateManifest: 60,
   rateLesson: 120,
   rateAsset: 120,
+  rateAdmin: 60,
+  identityProvider: 'deny',
   assetUrlTtlSeconds: 300,
   host: '127.0.0.1',
   port: 3000,
