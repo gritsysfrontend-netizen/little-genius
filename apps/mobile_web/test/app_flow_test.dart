@@ -113,6 +113,8 @@ void main() {
       await _saveFixture(repository);
       await tester.pumpWidget(_app(repository, _OfflineSource()));
       await tester.pumpAndSettle();
+      expect(find.byKey(const Key('category-pairs')), findsOneWidget);
+      expect(find.byKey(const Key('category-colors')), findsNothing);
       await tester.tap(find.byKey(const Key('animals-button')));
       await tester.pumpAndSettle();
       expect(find.text('Elephant'), findsOneWidget);

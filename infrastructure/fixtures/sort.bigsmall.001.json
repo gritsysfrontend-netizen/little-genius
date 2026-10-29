@@ -1,0 +1,62 @@
+{
+  "schemaVersion": "1.0",
+  "contentId": "sort.bigsmall.001",
+  "contentVersion": 1,
+  "categoryId": "sizes",
+  "ageRange": { "minMonths": 37, "maxMonths": 47 },
+  "learningObjectives": ["size_groups"],
+  "difficulty": 1,
+  "estimatedDurationSeconds": 50,
+  "localizations": {
+    "en": {
+      "title": "Big and small",
+      "instruction": "Put each one in its group.",
+      "feedbackCorrect": "Each one is in its group.",
+      "feedbackRetry": "That group is different. Try the other."
+    },
+    "hi": {
+      "title": "बड़ा और छोटा",
+      "instruction": "हर एक को उसके समूह में रखें।",
+      "feedbackCorrect": "हर एक अपने समूह में है।",
+      "feedbackRetry": "यह समूह अलग है। दूसरा चुनें।"
+    },
+    "ta": {
+      "title": "பெரியதும் சிறியதும்",
+      "instruction": "ஒவ்வொன்றையும் அதன் குழுவில் வையுங்கள்.",
+      "feedbackCorrect": "ஒவ்வொன்றும் தன் குழுவில் உள்ளது.",
+      "feedbackRetry": "அந்தக் குழு வேறு. மற்றதைத் தேர்ந்தெடுங்கள்."
+    }
+  },
+  "assets": [],
+  "interaction": {
+    "type": "sorting",
+    "completionRule": "each_item_sorted",
+    "retryPolicy": "unlimited",
+    "bins": [
+      {
+        "id": "big",
+        "label": { "en": "Big", "hi": "बड़ा", "ta": "பெரியது" }
+      },
+      {
+        "id": "small",
+        "label": { "en": "Small", "hi": "छोटा", "ta": "சிறியது" }
+      }
+    ],
+    "items": [
+      {
+        "id": "house",
+        "label": { "en": "House", "hi": "घर", "ta": "வீடு" },
+        "binId": "big"
+      },
+      {
+        "id": "cup",
+        "label": { "en": "Cup", "hi": "कप", "ta": "கோப்பை" },
+        "binId": "small"
+      }
+    ]
+  },
+  "accessibility": {
+    "imageLabel": { "en": "House and cup", "hi": "घर और कप", "ta": "வீடு மற்றும் கோப்பை" },
+    "requiresAudio": false
+  }
+}

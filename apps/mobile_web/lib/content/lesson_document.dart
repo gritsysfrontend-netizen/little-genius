@@ -1,5 +1,7 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 
+import 'lesson_interaction.dart';
+
 part 'lesson_document.freezed.dart';
 part 'lesson_document.g.dart';
 
@@ -16,7 +18,8 @@ abstract class LessonDocument with _$LessonDocument {
     required int estimatedDurationSeconds,
     required Map<String, LessonLocalization> localizations,
     required List<AssetRef> assets,
-    required TapToLearn interaction,
+    @JsonKey(fromJson: readInteraction, toJson: writeInteraction)
+    required LessonInteraction interaction,
     required LessonAccessibility accessibility,
   }) = _LessonDocument;
 
@@ -39,6 +42,7 @@ abstract class LessonLocalization with _$LessonLocalization {
     required String title,
     required String instruction,
     required String feedbackCorrect,
+    String? feedbackRetry,
     LessonAudio? audio,
   }) = _LessonLocalization;
 
@@ -64,19 +68,6 @@ abstract class AssetRef with _$AssetRef {
 
   factory AssetRef.fromJson(Map<String, dynamic> json) =>
       _$AssetRefFromJson(json);
-}
-
-@freezed
-abstract class TapToLearn with _$TapToLearn {
-  const factory TapToLearn({
-    required String type,
-    required String targetAssetId,
-    required String completionRule,
-    required String retryPolicy,
-  }) = _TapToLearn;
-
-  factory TapToLearn.fromJson(Map<String, dynamic> json) =>
-      _$TapToLearnFromJson(json);
 }
 
 @freezed

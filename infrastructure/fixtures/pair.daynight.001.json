@@ -1,0 +1,52 @@
+{
+  "schemaVersion": "1.0",
+  "contentId": "pair.daynight.001",
+  "contentVersion": 1,
+  "categoryId": "pairs",
+  "ageRange": { "minMonths": 25, "maxMonths": 35 },
+  "learningObjectives": ["matching_pairs"],
+  "difficulty": 1,
+  "estimatedDurationSeconds": 50,
+  "localizations": {
+    "en": {
+      "title": "Day and night",
+      "instruction": "Match the pair.",
+      "feedbackCorrect": "The pairs match.",
+      "feedbackRetry": "Not a pair. Try another."
+    },
+    "hi": {
+      "title": "दिन और रात",
+      "instruction": "जोड़ी मिलाएँ।",
+      "feedbackCorrect": "जोड़ी मिल गई।",
+      "feedbackRetry": "यह जोड़ी नहीं है। दूसरी चुनें।"
+    },
+    "ta": {
+      "title": "பகல் மற்றும் இரவு",
+      "instruction": "இணையைப் பொருத்துங்கள்.",
+      "feedbackCorrect": "இணை சரியாக உள்ளது.",
+      "feedbackRetry": "இது இணை அல்ல. வேறொன்றைத் தேர்ந்தெடுங்கள்."
+    }
+  },
+  "assets": [],
+  "interaction": {
+    "type": "matching",
+    "completionRule": "all_pairs_matched",
+    "retryPolicy": "unlimited",
+    "pairs": [
+      {
+        "id": "sun",
+        "prompt": { "en": "Sun", "hi": "सूरज", "ta": "சூரியன்" },
+        "match": { "en": "Day", "hi": "दिन", "ta": "பகல்" }
+      },
+      {
+        "id": "moon",
+        "prompt": { "en": "Moon", "hi": "चाँद", "ta": "நிலா" },
+        "match": { "en": "Night", "hi": "रात", "ta": "இரவு" }
+      }
+    ]
+  },
+  "accessibility": {
+    "imageLabel": { "en": "Sun and moon", "hi": "सूरज और चाँद", "ta": "சூரியன் மற்றும் நிலா" },
+    "requiresAudio": false
+  }
+}

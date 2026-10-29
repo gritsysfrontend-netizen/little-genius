@@ -8,6 +8,7 @@ const localization = z
     title: z.string().min(1).max(80),
     instruction: z.string().min(1).max(160),
     feedbackCorrect: z.string().min(1).max(80),
+    feedbackRetry: z.string().min(1).max(80).optional(),
     audio: z
       .object({
         instructionAssetId: id,
@@ -25,6 +26,24 @@ const assetRef = z
   })
   .strict();
 
+const localeText = z
+  .object({
+    en: z.string().min(1).max(40).optional(),
+    hi: z.string().min(1).max(40).optional(),
+    ta: z.string().min(1).max(40).optional(),
+  })
+  .strict()
+  .refine((value) => Boolean(value.en || value.hi || value.ta), {
+    message: 'label needs a locale',
+  });
+
+const labeledChoice = z
+  .object({
+    id,
+    label: localeText,
+  })
+  .strict();
+
 const tapToLearn = z
   .object({
     type: z.literal('tap_to_learn'),
@@ -33,6 +52,85 @@ const tapToLearn = z
     retryPolicy: z.literal('unlimited'),
   })
   .strict();
+
+const singleChoice = z
+  .object({
+    type: z.literal('single_choice'),
+    completionRule: z.literal('answer_selected'),
+    retryPolicy: z.literal('unlimited'),
+    answerId: id,
+    choices: z.array(labeledChoice).min(2).max(4),
+  })
+  .strict();
+
+const matching = z
+  .object({
+    type: z.literal('matching'),
+    completionRule: z.literal('all_pairs_matched'),
+    retryPolicy: z.literal('unlimited'),
+    pairs: z
+      .array(
+        z
+          .object({
+            id,
+            prompt: localeText,
+            match: localeText,
+          })
+          .strict(),
+      )
+      .min(2)
+      .max(4),
+  })
+  .strict();
+
+const sorting = z
+  .object({
+    type: z.literal('sorting'),
+    completionRule: z.literal('each_item_sorted'),
+    retryPolicy: z.literal('unlimited'),
+    bins: z.array(labeledChoice).min(2).max(3),
+    items: z
+      .array(
+        z
+          .object({
+            id,
+            label: localeText,
+            binId: id,
+          })
+          .strict(),
+      )
+      .min(2)
+      .max(4),
+  })
+  .strict();
+
+const counting = z
+  .object({
+    type: z.literal('counting'),
+    completionRule: z.literal('count_matches'),
+    retryPolicy: z.literal('unlimited'),
+    targetCount: z.number().int().min(1).max(10),
+    maxCount: z.number().int().min(1).max(10),
+  })
+  .strict();
+
+const sequencing = z
+  .object({
+    type: z.literal('sequencing'),
+    completionRule: z.literal('order_matches'),
+    retryPolicy: z.literal('unlimited'),
+    steps: z.array(labeledChoice).min(2).max(6),
+  })
+  .strict();
+
+const interaction = z.discriminatedUnion('type', [
+  tapToLearn,
+  singleChoice,
+  matching,
+  sorting,
+  counting,
+  sequencing,
+]);
 
 export const lessonDocumentSchema = z
   .object({
@@ -60,7 +158,7 @@ export const lessonDocumentSchema = z
         message: 'at least one localization',
       }),
     assets: z.array(assetRef),
-    interaction: tapToLearn,
+    interaction,
     accessibility: z
       .object({
         imageLabel: z
@@ -80,8 +178,88 @@ export const lessonDocumentSchema = z
       ctx.addIssue({ code: z.ZodIssueCode.custom, message: 'age range is inverted' });
     }
     const known = new Set(doc.assets.map((asset) => asset.assetId));
-    if (!known.has(doc.interaction.targetAssetId)) {
-      ctx.addIssue({ code: z.ZodIssueCode.custom, message: 'target asset is missing' });
+    const locales = new Set(
+      (['en', 'hi', 'ta'] as const).filter((code) => doc.localizations[code]),
+    );
+    const covers = (label: { en?: string; hi?: string; ta?: string }) =>
+      [...locales].every((code) => Boolean(label[code]));
+    const unique = (ids: string[], message: string) => {
+      if (new Set(ids).size !== ids.length) {
+        ctx.addIssue({ code: z.ZodIssueCode.custom, message });
+      }
+    };
+    if (doc.interaction.type !== 'tap_to_learn') {
+      for (const locale of Object.values(doc.localizations)) {
+        if (locale && !locale.feedbackRetry) {
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            message: 'retry feedback is missing',
+          });
+        }
+      }
+    }
+    switch (doc.interaction.type) {
+      case 'tap_to_learn':
+        if (!known.has(doc.interaction.targetAssetId)) {
+          ctx.addIssue({ code: z.ZodIssueCode.custom, message: 'target asset is missing' });
+        }
+        break;
+      case 'single_choice': {
+        const ids = doc.interaction.choices.map((choice) => choice.id);
+        unique(ids, 'choice ids repeat');
+        if (!ids.includes(doc.interaction.answerId)) {
+          ctx.addIssue({ code: z.ZodIssueCode.custom, message: 'answer is not a choice' });
+        }
+        if (doc.interaction.choices.some((choice) => !covers(choice.label))) {
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            message: 'choice label is missing a locale',
+          });
+        }
+        break;
+      }
+      case 'matching': {
+        unique(
+          doc.interaction.pairs.map((pair) => pair.id),
+          'pair ids repeat',
+        );
+        if (doc.interaction.pairs.some((pair) => !covers(pair.prompt) || !covers(pair.match))) {
+          ctx.addIssue({ code: z.ZodIssueCode.custom, message: 'pair label is missing a locale' });
+        }
+        break;
+      }
+      case 'sorting': {
+        const bins = doc.interaction.bins.map((bin) => bin.id);
+        unique(bins, 'bin ids repeat');
+        unique(
+          doc.interaction.items.map((item) => item.id),
+          'item ids repeat',
+        );
+        if (doc.interaction.items.some((item) => !bins.includes(item.binId))) {
+          ctx.addIssue({ code: z.ZodIssueCode.custom, message: 'item bin is missing' });
+        }
+        if (
+          doc.interaction.bins.some((bin) => !covers(bin.label)) ||
+          doc.interaction.items.some((item) => !covers(item.label))
+        ) {
+          ctx.addIssue({ code: z.ZodIssueCode.custom, message: 'sort label is missing a locale' });
+        }
+        break;
+      }
+      case 'counting':
+        if (doc.interaction.maxCount < doc.interaction.targetCount) {
+          ctx.addIssue({ code: z.ZodIssueCode.custom, message: 'count range is inverted' });
+        }
+        break;
+      case 'sequencing':
+        unique(
+          doc.interaction.steps.map((step) => step.id),
+          'step ids repeat',
+        );
+        if (doc.interaction.steps.some((step) => !covers(step.label))) {
+          ctx.addIssue({ code: z.ZodIssueCode.custom, message: 'step label is missing a locale' });
+        }
+        break;
     }
     for (const locale of Object.values(doc.localizations)) {
       const audioId = locale?.audio?.instructionAssetId;

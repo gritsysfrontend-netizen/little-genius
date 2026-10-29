@@ -6,31 +6,31 @@ part of 'lesson_document.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-_LessonDocument _$LessonDocumentFromJson(
-  Map<String, dynamic> json,
-) => _LessonDocument(
-  schemaVersion: json['schemaVersion'] as String,
-  contentId: json['contentId'] as String,
-  contentVersion: (json['contentVersion'] as num).toInt(),
-  categoryId: json['categoryId'] as String,
-  ageRange: AgeRange.fromJson(json['ageRange'] as Map<String, dynamic>),
-  learningObjectives: (json['learningObjectives'] as List<dynamic>)
-      .map((e) => e as String)
-      .toList(),
-  difficulty: (json['difficulty'] as num).toInt(),
-  estimatedDurationSeconds: (json['estimatedDurationSeconds'] as num).toInt(),
-  localizations: (json['localizations'] as Map<String, dynamic>).map(
-    (k, e) =>
-        MapEntry(k, LessonLocalization.fromJson(e as Map<String, dynamic>)),
-  ),
-  assets: (json['assets'] as List<dynamic>)
-      .map((e) => AssetRef.fromJson(e as Map<String, dynamic>))
-      .toList(),
-  interaction: TapToLearn.fromJson(json['interaction'] as Map<String, dynamic>),
-  accessibility: LessonAccessibility.fromJson(
-    json['accessibility'] as Map<String, dynamic>,
-  ),
-);
+_LessonDocument _$LessonDocumentFromJson(Map<String, dynamic> json) =>
+    _LessonDocument(
+      schemaVersion: json['schemaVersion'] as String,
+      contentId: json['contentId'] as String,
+      contentVersion: (json['contentVersion'] as num).toInt(),
+      categoryId: json['categoryId'] as String,
+      ageRange: AgeRange.fromJson(json['ageRange'] as Map<String, dynamic>),
+      learningObjectives: (json['learningObjectives'] as List<dynamic>)
+          .map((e) => e as String)
+          .toList(),
+      difficulty: (json['difficulty'] as num).toInt(),
+      estimatedDurationSeconds: (json['estimatedDurationSeconds'] as num)
+          .toInt(),
+      localizations: (json['localizations'] as Map<String, dynamic>).map(
+        (k, e) =>
+            MapEntry(k, LessonLocalization.fromJson(e as Map<String, dynamic>)),
+      ),
+      assets: (json['assets'] as List<dynamic>)
+          .map((e) => AssetRef.fromJson(e as Map<String, dynamic>))
+          .toList(),
+      interaction: readInteraction(json['interaction']),
+      accessibility: LessonAccessibility.fromJson(
+        json['accessibility'] as Map<String, dynamic>,
+      ),
+    );
 
 Map<String, dynamic> _$LessonDocumentToJson(_LessonDocument instance) =>
     <String, dynamic>{
@@ -46,7 +46,7 @@ Map<String, dynamic> _$LessonDocumentToJson(_LessonDocument instance) =>
         (k, e) => MapEntry(k, e.toJson()),
       ),
       'assets': instance.assets.map((e) => e.toJson()).toList(),
-      'interaction': instance.interaction.toJson(),
+      'interaction': writeInteraction(instance.interaction),
       'accessibility': instance.accessibility.toJson(),
     };
 
@@ -65,6 +65,7 @@ _LessonLocalization _$LessonLocalizationFromJson(Map<String, dynamic> json) =>
       title: json['title'] as String,
       instruction: json['instruction'] as String,
       feedbackCorrect: json['feedbackCorrect'] as String,
+      feedbackRetry: json['feedbackRetry'] as String?,
       audio: json['audio'] == null
           ? null
           : LessonAudio.fromJson(json['audio'] as Map<String, dynamic>),
@@ -75,6 +76,7 @@ Map<String, dynamic> _$LessonLocalizationToJson(_LessonLocalization instance) =>
       'title': instance.title,
       'instruction': instance.instruction,
       'feedbackCorrect': instance.feedbackCorrect,
+      'feedbackRetry': instance.feedbackRetry,
       'audio': instance.audio?.toJson(),
     };
 
@@ -95,21 +97,6 @@ Map<String, dynamic> _$AssetRefToJson(_AssetRef instance) => <String, dynamic>{
   'mediaType': instance.mediaType,
   'sha256': instance.sha256,
 };
-
-_TapToLearn _$TapToLearnFromJson(Map<String, dynamic> json) => _TapToLearn(
-  type: json['type'] as String,
-  targetAssetId: json['targetAssetId'] as String,
-  completionRule: json['completionRule'] as String,
-  retryPolicy: json['retryPolicy'] as String,
-);
-
-Map<String, dynamic> _$TapToLearnToJson(_TapToLearn instance) =>
-    <String, dynamic>{
-      'type': instance.type,
-      'targetAssetId': instance.targetAssetId,
-      'completionRule': instance.completionRule,
-      'retryPolicy': instance.retryPolicy,
-    };
 
 _LessonAccessibility _$LessonAccessibilityFromJson(Map<String, dynamic> json) =>
     _LessonAccessibility(

@@ -94,6 +94,33 @@ class AppLocalizationsTa extends AppLocalizations {
   String get animalsTitle => 'விலங்குகள்';
 
   @override
+  String get colorsTitle => 'நிறங்கள்';
+
+  @override
+  String get pairsTitle => 'இணைகள்';
+
+  @override
+  String get sizesTitle => 'அளவுகள்';
+
+  @override
+  String get numbersTitle => 'எண்கள்';
+
+  @override
+  String get routinesTitle => 'வரிசை';
+
+  @override
+  String get countMore => 'கூடுதல்';
+
+  @override
+  String get countLess => 'குறைவு';
+
+  @override
+  String get countDone => 'முடிந்தது';
+
+  @override
+  String get gentleRetry => 'மீண்டும் முயலுங்கள்.';
+
+  @override
   String get downloadAction => 'பதிவிறக்கம்';
 
   @override

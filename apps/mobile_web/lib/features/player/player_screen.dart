@@ -7,6 +7,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../content/canonical_json.dart';
 import '../../content/lesson_document.dart';
+import '../../content/lesson_interaction.dart';
 import '../../content/lesson_parser.dart';
 import '../../content/media_type.dart';
 import '../../content/widgets.dart';
@@ -76,7 +77,11 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen> {
         if (mounted) setState(() => _kind = _PlayerKind.checksum);
         return;
       }
-      if (asset.assetId == lesson.interaction.targetAssetId) image = blob.bytes;
+      final interaction = lesson.interaction;
+      if (interaction is TapToLearn &&
+          asset.assetId == interaction.targetAssetId) {
+        image = blob.bytes;
+      }
     }
     final copy = resolveCopy(
       localizations: {
@@ -259,6 +264,16 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen> {
         onReplayOther: copy?.secondary?.instructionAssetId == null
             ? null
             : () => _playAsset(copy?.secondary?.instructionAssetId),
+        locale: copy?.primaryLocale ?? 'en',
+        onRetry: () {
+          if (!mounted) return;
+          final retry = _copy?.primary.feedbackRetry;
+          setState(() {
+            _feedback = (retry == null || retry.isEmpty)
+                ? AppLocalizations.of(context).gentleRetry
+                : retry;
+          });
+        },
       ),
     );
   }
@@ -271,6 +286,7 @@ LocalizedCopy _copyOf(LessonLocalization value) {
     title: value.title,
     instruction: value.instruction,
     feedbackCorrect: value.feedbackCorrect,
+    feedbackRetry: value.feedbackRetry,
     instructionAssetId: value.audio?.instructionAssetId,
   );
 }

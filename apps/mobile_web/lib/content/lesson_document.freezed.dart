@@ -16,7 +16,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$LessonDocument {
 
- String get schemaVersion; String get contentId; int get contentVersion; String get categoryId; AgeRange get ageRange; List<String> get learningObjectives; int get difficulty; int get estimatedDurationSeconds; Map<String, LessonLocalization> get localizations; List<AssetRef> get assets; TapToLearn get interaction; LessonAccessibility get accessibility;
+ String get schemaVersion; String get contentId; int get contentVersion; String get categoryId; AgeRange get ageRange; List<String> get learningObjectives; int get difficulty; int get estimatedDurationSeconds; Map<String, LessonLocalization> get localizations; List<AssetRef> get assets;@JsonKey(fromJson: readInteraction, toJson: writeInteraction) LessonInteraction get interaction; LessonAccessibility get accessibility;
 /// Create a copy of LessonDocument
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -54,11 +54,11 @@ abstract mixin class $LessonDocumentCopyWith<$Res>  {
   factory $LessonDocumentCopyWith(LessonDocument value, $Res Function(LessonDocument) _then) = _$LessonDocumentCopyWithImpl;
 @useResult
 $Res call({
- String schemaVersion, String contentId, int contentVersion, String categoryId, AgeRange ageRange, List<String> learningObjectives, int difficulty, int estimatedDurationSeconds, Map<String, LessonLocalization> localizations, List<AssetRef> assets, TapToLearn interaction, LessonAccessibility accessibility
+ String schemaVersion, String contentId, int contentVersion, String categoryId, AgeRange ageRange, List<String> learningObjectives, int difficulty, int estimatedDurationSeconds, Map<String, LessonLocalization> localizations, List<AssetRef> assets,@JsonKey(fromJson: readInteraction, toJson: writeInteraction) LessonInteraction interaction, LessonAccessibility accessibility
 });
 
 
-$AgeRangeCopyWith<$Res> get ageRange;$TapToLearnCopyWith<$Res> get interaction;$LessonAccessibilityCopyWith<$Res> get accessibility;
+$AgeRangeCopyWith<$Res> get ageRange;$LessonAccessibilityCopyWith<$Res> get accessibility;
 
 }
 /// @nodoc
@@ -84,7 +84,7 @@ as int,estimatedDurationSeconds: null == estimatedDurationSeconds ? _self.estima
 as int,localizations: null == localizations ? _self.localizations : localizations // ignore: cast_nullable_to_non_nullable
 as Map<String, LessonLocalization>,assets: null == assets ? _self.assets : assets // ignore: cast_nullable_to_non_nullable
 as List<AssetRef>,interaction: null == interaction ? _self.interaction : interaction // ignore: cast_nullable_to_non_nullable
-as TapToLearn,accessibility: null == accessibility ? _self.accessibility : accessibility // ignore: cast_nullable_to_non_nullable
+as LessonInteraction,accessibility: null == accessibility ? _self.accessibility : accessibility // ignore: cast_nullable_to_non_nullable
 as LessonAccessibility,
   ));
 }
@@ -96,15 +96,6 @@ $AgeRangeCopyWith<$Res> get ageRange {
   
   return $AgeRangeCopyWith<$Res>(_self.ageRange, (value) {
     return _then(_self.copyWith(ageRange: value));
-  });
-}/// Create a copy of LessonDocument
-/// with the given fields replaced by the non-null parameter values.
-@override
-@pragma('vm:prefer-inline')
-$TapToLearnCopyWith<$Res> get interaction {
-  
-  return $TapToLearnCopyWith<$Res>(_self.interaction, (value) {
-    return _then(_self.copyWith(interaction: value));
   });
 }/// Create a copy of LessonDocument
 /// with the given fields replaced by the non-null parameter values.
@@ -197,7 +188,7 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String schemaVersion,  String contentId,  int contentVersion,  String categoryId,  AgeRange ageRange,  List<String> learningObjectives,  int difficulty,  int estimatedDurationSeconds,  Map<String, LessonLocalization> localizations,  List<AssetRef> assets,  TapToLearn interaction,  LessonAccessibility accessibility)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String schemaVersion,  String contentId,  int contentVersion,  String categoryId,  AgeRange ageRange,  List<String> learningObjectives,  int difficulty,  int estimatedDurationSeconds,  Map<String, LessonLocalization> localizations,  List<AssetRef> assets, @JsonKey(fromJson: readInteraction, toJson: writeInteraction)  LessonInteraction interaction,  LessonAccessibility accessibility)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _LessonDocument() when $default != null:
 return $default(_that.schemaVersion,_that.contentId,_that.contentVersion,_that.categoryId,_that.ageRange,_that.learningObjectives,_that.difficulty,_that.estimatedDurationSeconds,_that.localizations,_that.assets,_that.interaction,_that.accessibility);case _:
@@ -218,7 +209,7 @@ return $default(_that.schemaVersion,_that.contentId,_that.contentVersion,_that.c
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String schemaVersion,  String contentId,  int contentVersion,  String categoryId,  AgeRange ageRange,  List<String> learningObjectives,  int difficulty,  int estimatedDurationSeconds,  Map<String, LessonLocalization> localizations,  List<AssetRef> assets,  TapToLearn interaction,  LessonAccessibility accessibility)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String schemaVersion,  String contentId,  int contentVersion,  String categoryId,  AgeRange ageRange,  List<String> learningObjectives,  int difficulty,  int estimatedDurationSeconds,  Map<String, LessonLocalization> localizations,  List<AssetRef> assets, @JsonKey(fromJson: readInteraction, toJson: writeInteraction)  LessonInteraction interaction,  LessonAccessibility accessibility)  $default,) {final _that = this;
 switch (_that) {
 case _LessonDocument():
 return $default(_that.schemaVersion,_that.contentId,_that.contentVersion,_that.categoryId,_that.ageRange,_that.learningObjectives,_that.difficulty,_that.estimatedDurationSeconds,_that.localizations,_that.assets,_that.interaction,_that.accessibility);case _:
@@ -238,7 +229,7 @@ return $default(_that.schemaVersion,_that.contentId,_that.contentVersion,_that.c
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String schemaVersion,  String contentId,  int contentVersion,  String categoryId,  AgeRange ageRange,  List<String> learningObjectives,  int difficulty,  int estimatedDurationSeconds,  Map<String, LessonLocalization> localizations,  List<AssetRef> assets,  TapToLearn interaction,  LessonAccessibility accessibility)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String schemaVersion,  String contentId,  int contentVersion,  String categoryId,  AgeRange ageRange,  List<String> learningObjectives,  int difficulty,  int estimatedDurationSeconds,  Map<String, LessonLocalization> localizations,  List<AssetRef> assets, @JsonKey(fromJson: readInteraction, toJson: writeInteraction)  LessonInteraction interaction,  LessonAccessibility accessibility)?  $default,) {final _that = this;
 switch (_that) {
 case _LessonDocument() when $default != null:
 return $default(_that.schemaVersion,_that.contentId,_that.contentVersion,_that.categoryId,_that.ageRange,_that.learningObjectives,_that.difficulty,_that.estimatedDurationSeconds,_that.localizations,_that.assets,_that.interaction,_that.accessibility);case _:
@@ -253,7 +244,7 @@ return $default(_that.schemaVersion,_that.contentId,_that.contentVersion,_that.c
 @JsonSerializable()
 
 class _LessonDocument implements LessonDocument {
-  const _LessonDocument({required this.schemaVersion, required this.contentId, required this.contentVersion, required this.categoryId, required this.ageRange, required  List<String> learningObjectives, required this.difficulty, required this.estimatedDurationSeconds, required  Map<String, LessonLocalization> localizations, required  List<AssetRef> assets, required this.interaction, required this.accessibility}): _learningObjectives = learningObjectives,_localizations = localizations,_assets = assets;
+  const _LessonDocument({required this.schemaVersion, required this.contentId, required this.contentVersion, required this.categoryId, required this.ageRange, required  List<String> learningObjectives, required this.difficulty, required this.estimatedDurationSeconds, required  Map<String, LessonLocalization> localizations, required  List<AssetRef> assets, @JsonKey(fromJson: readInteraction, toJson: writeInteraction) required this.interaction, required this.accessibility}): _learningObjectives = learningObjectives,_localizations = localizations,_assets = assets;
   factory _LessonDocument.fromJson(Map<String, dynamic> json) => _$LessonDocumentFromJson(json);
 
 @override final  String schemaVersion;
@@ -284,7 +275,7 @@ class _LessonDocument implements LessonDocument {
   return EqualUnmodifiableListView(_assets);
 }
 
-@override final  TapToLearn interaction;
+@override@JsonKey(fromJson: readInteraction, toJson: writeInteraction) final  LessonInteraction interaction;
 @override final  LessonAccessibility accessibility;
 
 /// Create a copy of LessonDocument
@@ -322,11 +313,11 @@ abstract mixin class _$LessonDocumentCopyWith<$Res> implements $LessonDocumentCo
   factory _$LessonDocumentCopyWith(_LessonDocument value, $Res Function(_LessonDocument) _then) = __$LessonDocumentCopyWithImpl;
 @override @useResult
 $Res call({
- String schemaVersion, String contentId, int contentVersion, String categoryId, AgeRange ageRange, List<String> learningObjectives, int difficulty, int estimatedDurationSeconds, Map<String, LessonLocalization> localizations, List<AssetRef> assets, TapToLearn interaction, LessonAccessibility accessibility
+ String schemaVersion, String contentId, int contentVersion, String categoryId, AgeRange ageRange, List<String> learningObjectives, int difficulty, int estimatedDurationSeconds, Map<String, LessonLocalization> localizations, List<AssetRef> assets,@JsonKey(fromJson: readInteraction, toJson: writeInteraction) LessonInteraction interaction, LessonAccessibility accessibility
 });
 
 
-@override $AgeRangeCopyWith<$Res> get ageRange;@override $TapToLearnCopyWith<$Res> get interaction;@override $LessonAccessibilityCopyWith<$Res> get accessibility;
+@override $AgeRangeCopyWith<$Res> get ageRange;@override $LessonAccessibilityCopyWith<$Res> get accessibility;
 
 }
 /// @nodoc
@@ -352,7 +343,7 @@ as int,estimatedDurationSeconds: null == estimatedDurationSeconds ? _self.estima
 as int,localizations: null == localizations ? _self._localizations : localizations // ignore: cast_nullable_to_non_nullable
 as Map<String, LessonLocalization>,assets: null == assets ? _self._assets : assets // ignore: cast_nullable_to_non_nullable
 as List<AssetRef>,interaction: null == interaction ? _self.interaction : interaction // ignore: cast_nullable_to_non_nullable
-as TapToLearn,accessibility: null == accessibility ? _self.accessibility : accessibility // ignore: cast_nullable_to_non_nullable
+as LessonInteraction,accessibility: null == accessibility ? _self.accessibility : accessibility // ignore: cast_nullable_to_non_nullable
 as LessonAccessibility,
   ));
 }
@@ -365,15 +356,6 @@ $AgeRangeCopyWith<$Res> get ageRange {
   
   return $AgeRangeCopyWith<$Res>(_self.ageRange, (value) {
     return _then(_self.copyWith(ageRange: value));
-  });
-}/// Create a copy of LessonDocument
-/// with the given fields replaced by the non-null parameter values.
-@override
-@pragma('vm:prefer-inline')
-$TapToLearnCopyWith<$Res> get interaction {
-  
-  return $TapToLearnCopyWith<$Res>(_self.interaction, (value) {
-    return _then(_self.copyWith(interaction: value));
   });
 }/// Create a copy of LessonDocument
 /// with the given fields replaced by the non-null parameter values.
@@ -664,7 +646,7 @@ as int,
 /// @nodoc
 mixin _$LessonLocalization {
 
- String get title; String get instruction; String get feedbackCorrect; LessonAudio? get audio;
+ String get title; String get instruction; String get feedbackCorrect; String? get feedbackRetry; LessonAudio? get audio;
 /// Create a copy of LessonLocalization
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -678,20 +660,20 @@ $LessonLocalizationCopyWith<LessonLocalization> get copyWith => _$LessonLocaliza
 @override
 bool operator ==(Object other) {
   final _this = this as LessonLocalization;
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is LessonLocalization&&(identical(other.title, _this.title) || other.title == _this.title)&&(identical(other.instruction, _this.instruction) || other.instruction == _this.instruction)&&(identical(other.feedbackCorrect, _this.feedbackCorrect) || other.feedbackCorrect == _this.feedbackCorrect)&&(identical(other.audio, _this.audio) || other.audio == _this.audio));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is LessonLocalization&&(identical(other.title, _this.title) || other.title == _this.title)&&(identical(other.instruction, _this.instruction) || other.instruction == _this.instruction)&&(identical(other.feedbackCorrect, _this.feedbackCorrect) || other.feedbackCorrect == _this.feedbackCorrect)&&(identical(other.feedbackRetry, _this.feedbackRetry) || other.feedbackRetry == _this.feedbackRetry)&&(identical(other.audio, _this.audio) || other.audio == _this.audio));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
 int get hashCode {
   final _this = this as LessonLocalization;
-  return Object.hash(runtimeType,_this.title,_this.instruction,_this.feedbackCorrect,_this.audio);
+  return Object.hash(runtimeType,_this.title,_this.instruction,_this.feedbackCorrect,_this.feedbackRetry,_this.audio);
 }
 
 @override
 String toString() {
   final _this = this as LessonLocalization;
-  return 'LessonLocalization(title: ${_this.title}, instruction: ${_this.instruction}, feedbackCorrect: ${_this.feedbackCorrect}, audio: ${_this.audio})';
+  return 'LessonLocalization(title: ${_this.title}, instruction: ${_this.instruction}, feedbackCorrect: ${_this.feedbackCorrect}, feedbackRetry: ${_this.feedbackRetry}, audio: ${_this.audio})';
 }
 
 
@@ -702,7 +684,7 @@ abstract mixin class $LessonLocalizationCopyWith<$Res>  {
   factory $LessonLocalizationCopyWith(LessonLocalization value, $Res Function(LessonLocalization) _then) = _$LessonLocalizationCopyWithImpl;
 @useResult
 $Res call({
- String title, String instruction, String feedbackCorrect, LessonAudio? audio
+ String title, String instruction, String feedbackCorrect, String? feedbackRetry, LessonAudio? audio
 });
 
 
@@ -719,12 +701,13 @@ class _$LessonLocalizationCopyWithImpl<$Res>
 
 /// Create a copy of LessonLocalization
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? title = null,Object? instruction = null,Object? feedbackCorrect = null,Object? audio = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? title = null,Object? instruction = null,Object? feedbackCorrect = null,Object? feedbackRetry = freezed,Object? audio = freezed,}) {
   return _then(LessonLocalization(
 title: null == title ? _self.title : title // ignore: cast_nullable_to_non_nullable
 as String,instruction: null == instruction ? _self.instruction : instruction // ignore: cast_nullable_to_non_nullable
 as String,feedbackCorrect: null == feedbackCorrect ? _self.feedbackCorrect : feedbackCorrect // ignore: cast_nullable_to_non_nullable
-as String,audio: freezed == audio ? _self.audio : audio // ignore: cast_nullable_to_non_nullable
+as String,feedbackRetry: freezed == feedbackRetry ? _self.feedbackRetry : feedbackRetry // ignore: cast_nullable_to_non_nullable
+as String?,audio: freezed == audio ? _self.audio : audio // ignore: cast_nullable_to_non_nullable
 as LessonAudio?,
   ));
 }
@@ -822,10 +805,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String title,  String instruction,  String feedbackCorrect,  LessonAudio? audio)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String title,  String instruction,  String feedbackCorrect,  String? feedbackRetry,  LessonAudio? audio)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _LessonLocalization() when $default != null:
-return $default(_that.title,_that.instruction,_that.feedbackCorrect,_that.audio);case _:
+return $default(_that.title,_that.instruction,_that.feedbackCorrect,_that.feedbackRetry,_that.audio);case _:
   return orElse();
 
 }
@@ -843,10 +826,10 @@ return $default(_that.title,_that.instruction,_that.feedbackCorrect,_that.audio)
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String title,  String instruction,  String feedbackCorrect,  LessonAudio? audio)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String title,  String instruction,  String feedbackCorrect,  String? feedbackRetry,  LessonAudio? audio)  $default,) {final _that = this;
 switch (_that) {
 case _LessonLocalization():
-return $default(_that.title,_that.instruction,_that.feedbackCorrect,_that.audio);case _:
+return $default(_that.title,_that.instruction,_that.feedbackCorrect,_that.feedbackRetry,_that.audio);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -863,10 +846,10 @@ return $default(_that.title,_that.instruction,_that.feedbackCorrect,_that.audio)
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String title,  String instruction,  String feedbackCorrect,  LessonAudio? audio)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String title,  String instruction,  String feedbackCorrect,  String? feedbackRetry,  LessonAudio? audio)?  $default,) {final _that = this;
 switch (_that) {
 case _LessonLocalization() when $default != null:
-return $default(_that.title,_that.instruction,_that.feedbackCorrect,_that.audio);case _:
+return $default(_that.title,_that.instruction,_that.feedbackCorrect,_that.feedbackRetry,_that.audio);case _:
   return null;
 
 }
@@ -878,12 +861,13 @@ return $default(_that.title,_that.instruction,_that.feedbackCorrect,_that.audio)
 @JsonSerializable()
 
 class _LessonLocalization implements LessonLocalization {
-  const _LessonLocalization({required this.title, required this.instruction, required this.feedbackCorrect, this.audio});
+  const _LessonLocalization({required this.title, required this.instruction, required this.feedbackCorrect, this.feedbackRetry, this.audio});
   factory _LessonLocalization.fromJson(Map<String, dynamic> json) => _$LessonLocalizationFromJson(json);
 
 @override final  String title;
 @override final  String instruction;
 @override final  String feedbackCorrect;
+@override final  String? feedbackRetry;
 @override final  LessonAudio? audio;
 
 /// Create a copy of LessonLocalization
@@ -899,18 +883,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-    return identical(this, other) || (other.runtimeType == runtimeType&&other is _LessonLocalization&&(identical(other.title, title) || other.title == title)&&(identical(other.instruction, instruction) || other.instruction == instruction)&&(identical(other.feedbackCorrect, feedbackCorrect) || other.feedbackCorrect == feedbackCorrect)&&(identical(other.audio, audio) || other.audio == audio));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _LessonLocalization&&(identical(other.title, title) || other.title == title)&&(identical(other.instruction, instruction) || other.instruction == instruction)&&(identical(other.feedbackCorrect, feedbackCorrect) || other.feedbackCorrect == feedbackCorrect)&&(identical(other.feedbackRetry, feedbackRetry) || other.feedbackRetry == feedbackRetry)&&(identical(other.audio, audio) || other.audio == audio));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
 int get hashCode {
-    return Object.hash(runtimeType,title,instruction,feedbackCorrect,audio);
+    return Object.hash(runtimeType,title,instruction,feedbackCorrect,feedbackRetry,audio);
 }
 
 @override
 String toString() {
-    return 'LessonLocalization(title: $title, instruction: $instruction, feedbackCorrect: $feedbackCorrect, audio: $audio)';
+    return 'LessonLocalization(title: $title, instruction: $instruction, feedbackCorrect: $feedbackCorrect, feedbackRetry: $feedbackRetry, audio: $audio)';
 }
 
 
@@ -921,7 +905,7 @@ abstract mixin class _$LessonLocalizationCopyWith<$Res> implements $LessonLocali
   factory _$LessonLocalizationCopyWith(_LessonLocalization value, $Res Function(_LessonLocalization) _then) = __$LessonLocalizationCopyWithImpl;
 @override @useResult
 $Res call({
- String title, String instruction, String feedbackCorrect, LessonAudio? audio
+ String title, String instruction, String feedbackCorrect, String? feedbackRetry, LessonAudio? audio
 });
 
 
@@ -938,12 +922,13 @@ class __$LessonLocalizationCopyWithImpl<$Res>
 
 /// Create a copy of LessonLocalization
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? title = null,Object? instruction = null,Object? feedbackCorrect = null,Object? audio = freezed,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? title = null,Object? instruction = null,Object? feedbackCorrect = null,Object? feedbackRetry = freezed,Object? audio = freezed,}) {
   return _then(_LessonLocalization(
 title: null == title ? _self.title : title // ignore: cast_nullable_to_non_nullable
 as String,instruction: null == instruction ? _self.instruction : instruction // ignore: cast_nullable_to_non_nullable
 as String,feedbackCorrect: null == feedbackCorrect ? _self.feedbackCorrect : feedbackCorrect // ignore: cast_nullable_to_non_nullable
-as String,audio: freezed == audio ? _self.audio : audio // ignore: cast_nullable_to_non_nullable
+as String,feedbackRetry: freezed == feedbackRetry ? _self.feedbackRetry : feedbackRetry // ignore: cast_nullable_to_non_nullable
+as String?,audio: freezed == audio ? _self.audio : audio // ignore: cast_nullable_to_non_nullable
 as LessonAudio?,
   ));
 }
@@ -1502,285 +1487,6 @@ class __$AssetRefCopyWithImpl<$Res>
 assetId: null == assetId ? _self.assetId : assetId // ignore: cast_nullable_to_non_nullable
 as String,mediaType: null == mediaType ? _self.mediaType : mediaType // ignore: cast_nullable_to_non_nullable
 as String,sha256: null == sha256 ? _self.sha256 : sha256 // ignore: cast_nullable_to_non_nullable
-as String,
-  ));
-}
-
-
-}
-
-
-/// @nodoc
-mixin _$TapToLearn {
-
- String get type; String get targetAssetId; String get completionRule; String get retryPolicy;
-/// Create a copy of TapToLearn
-/// with the given fields replaced by the non-null parameter values.
-@JsonKey(includeFromJson: false, includeToJson: false)
-@pragma('vm:prefer-inline')
-$TapToLearnCopyWith<TapToLearn> get copyWith => _$TapToLearnCopyWithImpl<TapToLearn>(this as TapToLearn, _$identity);
-
-  /// Serializes this TapToLearn to a JSON map.
-  Map<String, dynamic> toJson();
-
-
-@override
-bool operator ==(Object other) {
-  final _this = this as TapToLearn;
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is TapToLearn&&(identical(other.type, _this.type) || other.type == _this.type)&&(identical(other.targetAssetId, _this.targetAssetId) || other.targetAssetId == _this.targetAssetId)&&(identical(other.completionRule, _this.completionRule) || other.completionRule == _this.completionRule)&&(identical(other.retryPolicy, _this.retryPolicy) || other.retryPolicy == _this.retryPolicy));
-}
-
-@JsonKey(includeFromJson: false, includeToJson: false)
-@override
-int get hashCode {
-  final _this = this as TapToLearn;
-  return Object.hash(runtimeType,_this.type,_this.targetAssetId,_this.completionRule,_this.retryPolicy);
-}
-
-@override
-String toString() {
-  final _this = this as TapToLearn;
-  return 'TapToLearn(type: ${_this.type}, targetAssetId: ${_this.targetAssetId}, completionRule: ${_this.completionRule}, retryPolicy: ${_this.retryPolicy})';
-}
-
-
-}
-
-/// @nodoc
-abstract mixin class $TapToLearnCopyWith<$Res>  {
-  factory $TapToLearnCopyWith(TapToLearn value, $Res Function(TapToLearn) _then) = _$TapToLearnCopyWithImpl;
-@useResult
-$Res call({
- String type, String targetAssetId, String completionRule, String retryPolicy
-});
-
-
-
-
-}
-/// @nodoc
-class _$TapToLearnCopyWithImpl<$Res>
-    implements $TapToLearnCopyWith<$Res> {
-  _$TapToLearnCopyWithImpl(this._self, this._then);
-
-  final TapToLearn _self;
-  final $Res Function(TapToLearn) _then;
-
-/// Create a copy of TapToLearn
-/// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? type = null,Object? targetAssetId = null,Object? completionRule = null,Object? retryPolicy = null,}) {
-  return _then(TapToLearn(
-type: null == type ? _self.type : type // ignore: cast_nullable_to_non_nullable
-as String,targetAssetId: null == targetAssetId ? _self.targetAssetId : targetAssetId // ignore: cast_nullable_to_non_nullable
-as String,completionRule: null == completionRule ? _self.completionRule : completionRule // ignore: cast_nullable_to_non_nullable
-as String,retryPolicy: null == retryPolicy ? _self.retryPolicy : retryPolicy // ignore: cast_nullable_to_non_nullable
-as String,
-  ));
-}
-
-}
-
-
-/// Adds pattern-matching-related methods to [TapToLearn].
-extension TapToLearnPatterns on TapToLearn {
-/// A variant of `map` that fallback to returning `orElse`.
-///
-/// It is equivalent to doing:
-/// ```dart
-/// switch (sealedClass) {
-///   case final Subclass value:
-///     return ...;
-///   case _:
-///     return orElse();
-/// }
-/// ```
-
-@optionalTypeArgs TResult maybeMap<TResult extends Object?>(TResult Function( _TapToLearn value)?  $default,{required TResult orElse(),}){
-final _that = this;
-switch (_that) {
-case _TapToLearn() when $default != null:
-return $default(_that);case _:
-  return orElse();
-
-}
-}
-/// A `switch`-like method, using callbacks.
-///
-/// Callbacks receives the raw object, upcasted.
-/// It is equivalent to doing:
-/// ```dart
-/// switch (sealedClass) {
-///   case final Subclass value:
-///     return ...;
-///   case final Subclass2 value:
-///     return ...;
-/// }
-/// ```
-
-@optionalTypeArgs TResult map<TResult extends Object?>(TResult Function( _TapToLearn value)  $default,){
-final _that = this;
-switch (_that) {
-case _TapToLearn():
-return $default(_that);case _:
-  throw StateError('Unexpected subclass');
-
-}
-}
-/// A variant of `map` that fallback to returning `null`.
-///
-/// It is equivalent to doing:
-/// ```dart
-/// switch (sealedClass) {
-///   case final Subclass value:
-///     return ...;
-///   case _:
-///     return null;
-/// }
-/// ```
-
-@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>(TResult? Function( _TapToLearn value)?  $default,){
-final _that = this;
-switch (_that) {
-case _TapToLearn() when $default != null:
-return $default(_that);case _:
-  return null;
-
-}
-}
-/// A variant of `when` that fallback to an `orElse` callback.
-///
-/// It is equivalent to doing:
-/// ```dart
-/// switch (sealedClass) {
-///   case Subclass(:final field):
-///     return ...;
-///   case _:
-///     return orElse();
-/// }
-/// ```
-
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String type,  String targetAssetId,  String completionRule,  String retryPolicy)?  $default,{required TResult orElse(),}) {final _that = this;
-switch (_that) {
-case _TapToLearn() when $default != null:
-return $default(_that.type,_that.targetAssetId,_that.completionRule,_that.retryPolicy);case _:
-  return orElse();
-
-}
-}
-/// A `switch`-like method, using callbacks.
-///
-/// As opposed to `map`, this offers destructuring.
-/// It is equivalent to doing:
-/// ```dart
-/// switch (sealedClass) {
-///   case Subclass(:final field):
-///     return ...;
-///   case Subclass2(:final field2):
-///     return ...;
-/// }
-/// ```
-
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String type,  String targetAssetId,  String completionRule,  String retryPolicy)  $default,) {final _that = this;
-switch (_that) {
-case _TapToLearn():
-return $default(_that.type,_that.targetAssetId,_that.completionRule,_that.retryPolicy);case _:
-  throw StateError('Unexpected subclass');
-
-}
-}
-/// A variant of `when` that fallback to returning `null`
-///
-/// It is equivalent to doing:
-/// ```dart
-/// switch (sealedClass) {
-///   case Subclass(:final field):
-///     return ...;
-///   case _:
-///     return null;
-/// }
-/// ```
-
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String type,  String targetAssetId,  String completionRule,  String retryPolicy)?  $default,) {final _that = this;
-switch (_that) {
-case _TapToLearn() when $default != null:
-return $default(_that.type,_that.targetAssetId,_that.completionRule,_that.retryPolicy);case _:
-  return null;
-
-}
-}
-
-}
-
-/// @nodoc
-@JsonSerializable()
-
-class _TapToLearn implements TapToLearn {
-  const _TapToLearn({required this.type, required this.targetAssetId, required this.completionRule, required this.retryPolicy});
-  factory _TapToLearn.fromJson(Map<String, dynamic> json) => _$TapToLearnFromJson(json);
-
-@override final  String type;
-@override final  String targetAssetId;
-@override final  String completionRule;
-@override final  String retryPolicy;
-
-/// Create a copy of TapToLearn
-/// with the given fields replaced by the non-null parameter values.
-@override @JsonKey(includeFromJson: false, includeToJson: false)
-@pragma('vm:prefer-inline')
-_$TapToLearnCopyWith<_TapToLearn> get copyWith => __$TapToLearnCopyWithImpl<_TapToLearn>(this, _$identity);
-
-@override
-Map<String, dynamic> toJson() {
-  return _$TapToLearnToJson(this, );
-}
-
-@override
-bool operator ==(Object other) {
-    return identical(this, other) || (other.runtimeType == runtimeType&&other is _TapToLearn&&(identical(other.type, type) || other.type == type)&&(identical(other.targetAssetId, targetAssetId) || other.targetAssetId == targetAssetId)&&(identical(other.completionRule, completionRule) || other.completionRule == completionRule)&&(identical(other.retryPolicy, retryPolicy) || other.retryPolicy == retryPolicy));
-}
-
-@JsonKey(includeFromJson: false, includeToJson: false)
-@override
-int get hashCode {
-    return Object.hash(runtimeType,type,targetAssetId,completionRule,retryPolicy);
-}
-
-@override
-String toString() {
-    return 'TapToLearn(type: $type, targetAssetId: $targetAssetId, completionRule: $completionRule, retryPolicy: $retryPolicy)';
-}
-
-
-}
-
-/// @nodoc
-abstract mixin class _$TapToLearnCopyWith<$Res> implements $TapToLearnCopyWith<$Res> {
-  factory _$TapToLearnCopyWith(_TapToLearn value, $Res Function(_TapToLearn) _then) = __$TapToLearnCopyWithImpl;
-@override @useResult
-$Res call({
- String type, String targetAssetId, String completionRule, String retryPolicy
-});
-
-
-
-
-}
-/// @nodoc
-class __$TapToLearnCopyWithImpl<$Res>
-    implements _$TapToLearnCopyWith<$Res> {
-  __$TapToLearnCopyWithImpl(this._self, this._then);
-
-  final _TapToLearn _self;
-  final $Res Function(_TapToLearn) _then;
-
-/// Create a copy of TapToLearn
-/// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? type = null,Object? targetAssetId = null,Object? completionRule = null,Object? retryPolicy = null,}) {
-  return _then(_TapToLearn(
-type: null == type ? _self.type : type // ignore: cast_nullable_to_non_nullable
-as String,targetAssetId: null == targetAssetId ? _self.targetAssetId : targetAssetId // ignore: cast_nullable_to_non_nullable
-as String,completionRule: null == completionRule ? _self.completionRule : completionRule // ignore: cast_nullable_to_non_nullable
-as String,retryPolicy: null == retryPolicy ? _self.retryPolicy : retryPolicy // ignore: cast_nullable_to_non_nullable
 as String,
   ));
 }

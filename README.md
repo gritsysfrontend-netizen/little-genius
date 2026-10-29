@@ -1,6 +1,6 @@
 # Little Genius
 
-Little Genius is a small learning app for young children. This repository holds a local lesson slice: one elephant lesson, stored on the device, in English, Hindi, and Tamil. A grown-up creates a local profile. The child can download the lesson and play it again without a network connection. A grown-up can also set a play reminder that stays inside the app.
+Little Genius is a small learning app for young children. This repository holds a local lesson slice: sample activities in English, Hindi, and Tamil, stored on the device. The samples are a tap-to-learn elephant, a color choice, a matching pair, a sorting activity, a counting activity, and an ordering activity. A grown-up creates a local profile. The home screen shows a category only when a sample overlaps that profile’s age band and has that profile’s language. The child can download an activity and play it again without a network connection. A grown-up can also set a play reminder that stays inside the app.
 
 This is not a finished product. It is not ready for a store, a school, or real child accounts.
 
@@ -11,8 +11,9 @@ This is not a finished product. It is not ready for a store, a school, or real c
 - Switch the app’s buttons and labels between English, Hindi, and Tamil.
 - Download the elephant activity.
 - Tap the picture, hear the short instruction, and see that “started” and “finished” stay on the device after you close the app.
+- Open the other sample activities for the age band you chose. A wrong tap stays gentle and does not mark the activity as failed.
 
-The Hindi and Tamil sounds were made with a text-to-speech tool for this engineering slice. A native speaker has not signed off on them. The Hindi and Tamil sentences on the caregiver screen and the play reminder have not had native-speaker review either.
+The Hindi and Tamil sounds were made with a text-to-speech tool for this engineering slice. A native speaker has not signed off on them. The Hindi and Tamil sentences on the caregiver screen, the play reminder, and the sample activities have not had native-speaker review either.
 
 ## Run the API
 
@@ -39,7 +40,7 @@ flutter pub get
 flutter run -d chrome --dart-define=API_BASE_URL=http://127.0.0.1:3000
 ```
 
-Start the API first. In the app, create a profile, open Animals, and download the lesson. After that, the lesson can play if the API is stopped.
+Start the API first. In the app, create a profile, open a category for that age band, and download an activity. After that, a saved activity can play if the API is stopped. An activity plays in a language only when that language is part of the activity.
 
 On the web, the browser can delete saved lessons. A phone keeps them more reliably. The web build does not use SQLite.
 

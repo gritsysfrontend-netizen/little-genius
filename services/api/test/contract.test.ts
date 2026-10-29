@@ -94,12 +94,28 @@ test('manifest returns the elephant lesson for each locale and band', async () =
   assert.equal(body.locale, 'hi');
   assert.equal(body.ageBand, '1-2');
   assert.equal(body.nextCursor, null);
-  assert.equal(body.items.length, 1);
+  assert.equal(body.items.length, 2);
   assert.equal(body.items[0]?.title, 'हाथी');
   assert.equal(body.items[0]?.interactionType, 'tap_to_learn');
   assert.equal(body.items[0]?.contentId, 'animal.elephant.001');
+  assert.equal(body.items[1]?.contentId, 'color.red.001');
+  assert.equal(body.items[1]?.title, 'लाल');
+  assert.equal(body.items[1]?.interactionType, 'single_choice');
   const rawHash = createHash('sha256').update(response.body).digest('hex');
   assert.equal(`"${rawHash}"`, response.headers.etag);
+});
+
+test('manifest age band 4-5 keeps counting and sequencing only', async () => {
+  const response = await app.inject({
+    method: 'GET',
+    url: '/api/v1/content/manifest?locale=en&ageBand=4-5',
+  });
+  assert.equal(response.statusCode, 200);
+  const body = response.json() as { items: Array<{ contentId: string }> };
+  assert.deepEqual(
+    body.items.map((item) => item.contentId),
+    ['animal.elephant.001', 'count.birds.001', 'order.morning.001'],
+  );
 });
 
 test('manifest rejects a missing or unknown locale', async () => {
