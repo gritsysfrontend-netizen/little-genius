@@ -293,6 +293,35 @@ class AppLocalizationsTa extends AppLocalizations {
   String get noProgress => 'இன்னும் எதுவும் முடியவில்லை.';
 
   @override
+  String get progressOnDevice =>
+      'இந்தப் பட்டியல் இந்தச் சாதனத்திலேயே இருக்கும். இது பதிவேற்றப்படாது.';
+
+  @override
+  String get completedHeading => 'முடிந்த செயல்பாடுகள்';
+
+  @override
+  String get categoriesHeading => 'வகைகள்';
+
+  @override
+  String get recentHeading => 'சமீபத்தியவை';
+
+  @override
+  String get suggestionHeading => 'ஒரு செயல்பாட்டை முயலலாம்';
+
+  @override
+  String get suggestionNone =>
+      'இந்த வயதுக்கும் மொழிக்கும் வேறு செயல்பாடு இப்போது இல்லை.';
+
+  @override
+  String get openedActivity => 'திறந்தது';
+
+  @override
+  String get noCategoryYet => 'இன்னும் வகை இல்லை.';
+
+  @override
+  String get noRecent => 'இன்னும் சமீபத்தியது இல்லை.';
+
+  @override
   String get save => 'சேமி';
 
   @override

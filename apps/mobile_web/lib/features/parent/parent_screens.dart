@@ -15,7 +15,9 @@ import '../../routing/providers.dart';
 import '../common/app_status.dart';
 import '../common/page_frame.dart';
 import '../common/status_message.dart';
+import '../home/category_titles.dart';
 import 'download_manager.dart';
+import 'local_progress.dart';
 
 class ParentHomeScreen extends ConsumerWidget {
   const ParentHomeScreen({super.key});
@@ -309,8 +311,8 @@ class ProgressScreen extends ConsumerStatefulWidget {
 }
 
 class _ProgressScreenState extends ConsumerState<ProgressScreen> {
-  var _lines = const <String>[];
-  var _empty = true;
+  LocalProgressView? _view;
+  var _loaded = false;
 
   @override
   void initState() {
@@ -319,25 +321,31 @@ class _ProgressScreenState extends ConsumerState<ProgressScreen> {
   }
 
   Future<void> _load() async {
-    final profile = ref.read(sessionProvider).value;
-    if (profile == null) return;
-    final rows = await ref
-        .read(repositoryProvider)
-        .listProgress(profile.profileId);
+    final profile = await ref.read(sessionProvider.future);
     if (!mounted) return;
-    final text = AppLocalizations.of(context);
+    if (profile == null) {
+      setState(() => _loaded = true);
+      return;
+    }
+    final repository = ref.read(repositoryProvider);
+    final events = await repository.listEvents(profile.profileId);
+    final summaries = await repository.listProgress(profile.profileId);
+    if (!mounted) return;
     setState(() {
-      _empty = rows.isEmpty;
-      _lines = [
-        for (final row in rows)
-          '${row.categoryId}: ${text.startedLabel(row.startedCount)} ${text.completedLabel(row.completedCount)}',
-      ];
+      _loaded = true;
+      _view = describeLocalProgress(
+        ageBand: profile.ageBand,
+        locale: profile.preferredLocale,
+        events: events,
+        summaries: summaries,
+      );
     });
   }
 
   @override
   Widget build(BuildContext context) {
     final text = AppLocalizations.of(context);
+    final view = _view;
     return PageFrame(
       orderedFocus: true,
       onBack: () => context.go('/parent'),
@@ -351,12 +359,66 @@ class _ProgressScreenState extends ConsumerState<ProgressScreen> {
           ),
           const SizedBox(height: 12),
           Text(text.accountNotAvailable),
-          const SizedBox(height: 12),
-          if (_empty) ...[
-            const StatusMessage(status: AppStatus.empty),
-            Text(text.noProgress),
+          const SizedBox(height: 8),
+          Text(text.progressOnDevice, key: const Key('progress-on-device')),
+          if (!_loaded) ...[
+            const SizedBox(height: 12),
+            const StatusMessage(status: AppStatus.loading),
           ],
-          for (final line in _lines) Text(line),
+          if (view != null) ...[
+            const SizedBox(height: 20),
+            Text(
+              text.completedHeading,
+              style: Theme.of(context).textTheme.titleLarge,
+            ),
+            const SizedBox(height: 8),
+            if (view.completed.isEmpty)
+              Text(text.noProgress, key: const Key('no-progress'))
+            else
+              for (final item in view.completed)
+                Text(item.label, key: Key('completed-${item.contentId}')),
+            const SizedBox(height: 20),
+            Text(
+              text.categoriesHeading,
+              style: Theme.of(context).textTheme.titleLarge,
+            ),
+            const SizedBox(height: 8),
+            if (view.categoriesTouched.isEmpty)
+              Text(text.noCategoryYet, key: const Key('no-categories'))
+            else
+              for (final categoryId in view.categoriesTouched)
+                Text(
+                  categoryLabel(text, categoryId),
+                  key: Key('category-touched-$categoryId'),
+                ),
+            const SizedBox(height: 20),
+            Text(
+              text.recentHeading,
+              style: Theme.of(context).textTheme.titleLarge,
+            ),
+            const SizedBox(height: 8),
+            if (view.recent.isEmpty)
+              Text(text.noRecent, key: const Key('no-recent'))
+            else
+              for (final item in view.recent)
+                Text(
+                  '${item.label} · ${item.eventType == 'completed' ? text.finished : text.openedActivity}',
+                  key: Key('recent-${item.eventId}'),
+                ),
+            const SizedBox(height: 20),
+            Text(
+              text.suggestionHeading,
+              style: Theme.of(context).textTheme.titleLarge,
+            ),
+            const SizedBox(height: 8),
+            if (view.suggestion == null)
+              Text(text.suggestionNone, key: const Key('no-suggestion'))
+            else
+              Text(
+                view.suggestion!.label,
+                key: Key('suggestion-${view.suggestion!.contentId}'),
+              ),
+          ],
         ],
       ),
     );

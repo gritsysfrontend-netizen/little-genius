@@ -292,6 +292,35 @@ class AppLocalizationsEn extends AppLocalizations {
   String get noProgress => 'Nothing finished yet.';
 
   @override
+  String get progressOnDevice =>
+      'This list stays on this device. It is not uploaded.';
+
+  @override
+  String get completedHeading => 'Finished activities';
+
+  @override
+  String get categoriesHeading => 'Categories';
+
+  @override
+  String get recentHeading => 'Recent';
+
+  @override
+  String get suggestionHeading => 'One you could try';
+
+  @override
+  String get suggestionNone =>
+      'There is no other activity for this age and language.';
+
+  @override
+  String get openedActivity => 'Opened';
+
+  @override
+  String get noCategoryYet => 'No category yet.';
+
+  @override
+  String get noRecent => 'Nothing recent yet.';
+
+  @override
   String get save => 'Save';
 
   @override
