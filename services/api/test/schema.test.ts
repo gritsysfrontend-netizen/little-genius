@@ -9,7 +9,13 @@ import { canonicalJson } from '../src/canonical.js';
 import { monthsForBand } from '../src/modules/content/age-band.js';
 import { eventBatchSchema, profileCreateSchema } from '../src/modules/profiles/schemas.js';
 import { lessonDocumentSchema } from '../src/schemas/lesson.js';
-import { defaultFixtureDir, defaultSchemaPath } from '../src/seed.js';
+import {
+  assertReviewedFixtureFile,
+  defaultFixtureDir,
+  defaultSchemaPath,
+  FixturePublishClosedError,
+  reviewedFixtureFiles,
+} from '../src/seed.js';
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 
@@ -73,10 +79,32 @@ test('age bands overlap on the shared boundary month', () => {
   assert.deepEqual(monthsForBand('4-5'), [48, 60]);
 });
 
+test('a new lesson cannot be published through the fixture path', () => {
+  assert.throws(
+    () => assertReviewedFixtureFile('shape.circle.001.json'),
+    FixturePublishClosedError,
+  );
+  assert.deepEqual(reviewedFixtureFiles, [
+    'animal.elephant.001.json',
+    'color.red.001.json',
+    'pair.daynight.001.json',
+    'sort.bigsmall.001.json',
+    'count.birds.001.json',
+    'order.morning.001.json',
+  ]);
+  for (const fileName of reviewedFixtureFiles) {
+    assert.doesNotThrow(() => assertReviewedFixtureFile(fileName));
+  }
+});
+
 test('phase 5 profile schemas are documented and not routed', () => {
   const openapi = parseYaml(readFileSync(path.join(here, '../openapi/openapi.yaml'), 'utf8')) as {
     paths: Record<string, Record<string, { operationId?: string }>>;
   };
+  assert.equal(
+    Object.keys(openapi.paths).some((item) => item.startsWith('/admin')),
+    false,
+  );
   const ids = Object.values(openapi.paths).flatMap((pathItem) =>
     Object.values(pathItem)
       .map((operation) => operation.operationId)

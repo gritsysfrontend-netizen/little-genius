@@ -6,6 +6,8 @@ export type AppConfig = {
   rateManifest: number;
   rateLesson: number;
   rateAsset: number;
+  rateAdmin: number;
+  identityProvider: 'test' | 'deny';
   assetUrlTtlSeconds: number;
   host: string;
   port: number;
@@ -33,6 +35,8 @@ export function loadConfig(env: NodeJS.ProcessEnv = process.env): AppConfig {
     rateManifest: numberEnv(env.RATE_LIMIT_MANIFEST, 60),
     rateLesson: numberEnv(env.RATE_LIMIT_LESSON, 120),
     rateAsset: numberEnv(env.RATE_LIMIT_ASSET, 120),
+    rateAdmin: numberEnv(env.RATE_LIMIT_ADMIN, 60),
+    identityProvider: env.IDENTITY_PROVIDER === 'test' ? 'test' : 'deny',
     assetUrlTtlSeconds: numberEnv(env.ASSET_URL_TTL_SECONDS, 300),
     host: env.HOST ?? '127.0.0.1',
     port: numberEnv(env.PORT, 3000),

@@ -37,8 +37,12 @@ jobs:
       - run: npm ci
       - run: npx prisma generate
       - run: npm run format:check
+      - run: npx prettier --check ../content_admin
       - run: npm run openapi:check
       - run: npm test
+      - name: Content admin
+        working-directory: services/content_admin
+        run: node --experimental-strip-types --test test/*.test.ts
       - name: Secret scan
         working-directory: .
         run: node scripts/scan-secrets.mjs

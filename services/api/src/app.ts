@@ -5,6 +5,12 @@ import type { PrismaClient } from '@prisma/client';
 import Fastify, { type FastifyInstance, type FastifyServerOptions } from 'fastify';
 import type { AppConfig } from './config.js';
 import { errorBody } from './errors.js';
+import { registerAdminRoutes } from './modules/admin/routes.js';
+import {
+  DenyIdentityProvider,
+  TestIdentityProvider,
+  type IdentityProvider,
+} from './modules/admin/identity.js';
 import { registerContentRoutes } from './modules/content/routes.js';
 import { registerHealthRoutes, type ReadinessCheck } from './modules/health/routes.js';
 
@@ -12,6 +18,7 @@ export type BuildAppOptions = {
   prisma: PrismaClient;
   config: AppConfig;
   ready?: ReadinessCheck;
+  identity?: IdentityProvider;
   logger?: FastifyServerOptions['logger'];
 };
 
@@ -30,7 +37,8 @@ export async function buildApp(options: BuildAppOptions): Promise<FastifyInstanc
   await app.register(cors, {
     origin: true,
     credentials: false,
-    methods: ['GET', 'HEAD', 'OPTIONS'],
+    methods: ['GET', 'HEAD', 'POST', 'PATCH', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['authorization', 'content-type', 'x-request-id', 'x-asset-id'],
   });
 
   await app.register(rateLimit, {
@@ -92,6 +100,19 @@ export async function buildApp(options: BuildAppOptions): Promise<FastifyInstanc
       registerContentRoutes(scope, options.prisma, options.config);
     },
     { prefix: '/api/v1' },
+  );
+
+  const identity =
+    options.identity ??
+    (options.config.identityProvider === 'test'
+      ? new TestIdentityProvider()
+      : new DenyIdentityProvider());
+
+  await app.register(
+    async (scope) => {
+      registerAdminRoutes(scope, options.prisma, options.config, identity);
+    },
+    { prefix: '/admin/v1' },
   );
 
   return app;

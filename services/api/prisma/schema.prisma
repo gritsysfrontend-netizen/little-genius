@@ -54,8 +54,19 @@ model MediaAsset {
   rightsStatus String  @map("rights_status")
 
   refs ContentAssetRef[]
+  blob MediaAssetBlob?
 
   @@map("media_assets")
+}
+
+model MediaAssetBlob {
+  assetId     String @id @map("asset_id")
+  contentType String @map("content_type")
+  bytes       Bytes
+
+  asset MediaAsset @relation(fields: [assetId], references: [assetId], onDelete: Restrict)
+
+  @@map("media_asset_blobs")
 }
 
 model ContentAssetRef {
@@ -96,4 +107,49 @@ model ContentPackItem {
 
   @@id([packId, packVersion, position])
   @@map("content_pack_items")
+}
+
+/// Staff draft. Published lesson bytes stay on content_versions.
+model ContentDraft {
+  id                   String   @id
+  contentId            String   @map("content_id")
+  authorSub            String   @map("author_sub")
+  payload              Json
+  educationStatus      String   @default("pending") @map("education_status")
+  educationReviewerSub String?  @map("education_reviewer_sub")
+  rightsStatus         String   @default("pending") @map("rights_status")
+  rightsReviewerSub    String?  @map("rights_reviewer_sub")
+  state                String   @default("open")
+  publishedVersion     Int?     @map("published_version")
+  createdAt            DateTime @default(now()) @map("created_at")
+  updatedAt            DateTime @updatedAt @map("updated_at")
+
+  localeReviews DraftLocaleReview[]
+
+  @@map("content_drafts")
+}
+
+model DraftLocaleReview {
+  draftId     String  @map("draft_id")
+  locale      String
+  status      String
+  reviewerSub String? @map("reviewer_sub")
+
+  draft ContentDraft @relation(fields: [draftId], references: [id], onDelete: Restrict)
+
+  @@id([draftId, locale])
+  @@map("draft_locale_reviews")
+}
+
+model ContentAuditEvent {
+  id        String   @id
+  at        DateTime @default(now())
+  actorSub  String   @map("actor_sub")
+  action    String
+  contentId String?  @map("content_id")
+  draftId   String?  @map("draft_id")
+  detail    Json
+
+  @@index([at])
+  @@map("content_audit_events")
 }

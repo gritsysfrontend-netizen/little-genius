@@ -19,13 +19,32 @@ export function defaultSchemaPath(): string {
   return path.resolve(process.cwd(), '../../packages/content_schema/lesson-document.schema.json');
 }
 
-const activityLessons = [
+export const reviewedFixtureFiles = [
+  'animal.elephant.001.json',
   'color.red.001.json',
   'pair.daynight.001.json',
   'sort.bigsmall.001.json',
   'count.birds.001.json',
   'order.morning.001.json',
-];
+] as const;
+
+const activityLessons = reviewedFixtureFiles.filter((file) => file !== 'animal.elephant.001.json');
+
+export class FixturePublishClosedError extends Error {
+  readonly fileName: string;
+
+  constructor(fileName: string) {
+    super(`fixture path cannot publish ${fileName}`);
+    this.name = 'FixturePublishClosedError';
+    this.fileName = fileName;
+  }
+}
+
+export function assertReviewedFixtureFile(fileName: string): void {
+  if (!(reviewedFixtureFiles as readonly string[]).includes(fileName)) {
+    throw new FixturePublishClosedError(fileName);
+  }
+}
 
 type AssetChecksum = { file: string; sha256: string; bytes: number };
 
@@ -71,6 +90,7 @@ async function publishLesson(
     withPack: boolean;
   },
 ): Promise<void> {
+  assertReviewedFixtureFile(input.fileName);
   const raw = JSON.parse(readFileSync(path.join(fixtureDir, input.fileName), 'utf8')) as unknown;
   assertSchema(raw, schemaPath);
   const parsed = lessonDocumentSchema.parse(raw);

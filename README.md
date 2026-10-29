@@ -71,9 +71,16 @@ From `services/api` (Node.js 24 and PostgreSQL 17):
 
 ```bash
 npm run format:check
+npx prettier --check ../content_admin
 npm run openapi:check
 npm test
 npm audit --audit-level=high
+```
+
+From `services/content_admin`:
+
+```bash
+node --experimental-strip-types --test test/*.test.ts
 ```
 
 From the repository root:
@@ -101,7 +108,9 @@ GitHub Actions runs those checks, plus `npm audit`, the secret scan, and `docker
 
 ## What is not built
 
-Accounts, sign-in, cloud sync, a content editor, tracing, payments, push notifications, analytics, crash reporting, and Redis are not in this slice. Account export and deletion are named in the grown-up area and are not implemented. Parent account routes exist only as schemas and an API description. The app does not upload progress.
+Accounts, sign-in for families, cloud sync, tracing, payments, push notifications, analytics, crash reporting, and Redis are not in this slice. Account export and deletion are named in the grown-up area and are not implemented. Parent account routes exist only as schemas and an API description. The app does not upload progress.
+
+Staff can open a separate console with `node --experimental-strip-types src/serve.ts` from `services/content_admin`. It listens on `http://127.0.0.1:3010` and calls `/admin/v1` only. It is not linked from the child app. The API accepts a staff token only when `IDENTITY_PROVIDER=test` is set, and that switch is an unsigned test double, not a Cognito account. Do not turn it on for a shared or public server. A parent token, a token without an MFA claim, and a token without the required role are rejected by the API. The existing sample lessons still load from the reviewed fixture files. A new lesson is published from the staff console, not by adding another fixture file.
 
 Staging and production cloud projects are not created here. The host has not been chosen. GitHub secret-scanning administration and a hosted OpenAPI diff are not set up from this repository. This environment has no Apple signing certificate, so the iOS app has not been compiled here.
 

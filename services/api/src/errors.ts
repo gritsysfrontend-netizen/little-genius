@@ -2,6 +2,7 @@ import type { FastifyReply } from 'fastify';
 
 export const errorCodes = [
   'UNAUTHENTICATED',
+  'FORBIDDEN',
   'VALIDATION_ERROR',
   'PROFILE_NOT_FOUND',
   'CONTENT_NOT_FOUND',
