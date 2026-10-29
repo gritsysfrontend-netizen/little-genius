@@ -616,6 +616,60 @@ abstract class AppLocalizations {
   /// **'Nothing finished yet.'**
   String get noProgress;
 
+  /// No description provided for @progressOnDevice.
+  ///
+  /// In en, this message translates to:
+  /// **'This list stays on this device. It is not uploaded.'**
+  String get progressOnDevice;
+
+  /// No description provided for @completedHeading.
+  ///
+  /// In en, this message translates to:
+  /// **'Finished activities'**
+  String get completedHeading;
+
+  /// No description provided for @categoriesHeading.
+  ///
+  /// In en, this message translates to:
+  /// **'Categories'**
+  String get categoriesHeading;
+
+  /// No description provided for @recentHeading.
+  ///
+  /// In en, this message translates to:
+  /// **'Recent'**
+  String get recentHeading;
+
+  /// No description provided for @suggestionHeading.
+  ///
+  /// In en, this message translates to:
+  /// **'One you could try'**
+  String get suggestionHeading;
+
+  /// No description provided for @suggestionNone.
+  ///
+  /// In en, this message translates to:
+  /// **'There is no other activity for this age and language.'**
+  String get suggestionNone;
+
+  /// No description provided for @openedActivity.
+  ///
+  /// In en, this message translates to:
+  /// **'Opened'**
+  String get openedActivity;
+
+  /// No description provided for @noCategoryYet.
+  ///
+  /// In en, this message translates to:
+  /// **'No category yet.'**
+  String get noCategoryYet;
+
+  /// No description provided for @noRecent.
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing recent yet.'**
+  String get noRecent;
+
   /// No description provided for @save.
   ///
   /// In en, this message translates to:

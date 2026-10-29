@@ -13,8 +13,9 @@ This is not a finished product. It is not ready for a store, a school, or real c
 - Tap the picture, hear the short instruction, and see that “started” and “finished” stay on the device after you close the app.
 - Open the other sample activities for the age band you chose. A wrong tap stays gentle and does not mark the activity as failed.
 - In Grown-ups, open Downloads. It shows the space used, the installed pack, and which activities are not on the device yet. You can download the pack, cancel it, or try again. A pack that fails its checksum is not saved. The last pack that checked out stays.
+- In Grown-ups, open Progress. It lists finished activities, categories that were opened, recent activity, and one activity you could try next. The list is read from this device. It is not a score, a streak, or a comparison, and it is not uploaded.
 
-The Hindi and Tamil sounds were made with a text-to-speech tool for this engineering slice. A native speaker has not signed off on them. The Hindi and Tamil sentences on the caregiver screen, the play reminder, the sample activities, and the downloads screen have not had native-speaker review either.
+The Hindi and Tamil sounds were made with a text-to-speech tool for this engineering slice. A native speaker has not signed off on them. The Hindi and Tamil sentences on the caregiver screen, the play reminder, the sample activities, the downloads screen, and the progress screen have not had native-speaker review either.
 
 ## Run the API
 

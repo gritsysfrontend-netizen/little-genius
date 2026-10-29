@@ -291,6 +291,35 @@ class AppLocalizationsHi extends AppLocalizations {
   String get noProgress => 'अभी कुछ पूरा नहीं हुआ।';
 
   @override
+  String get progressOnDevice =>
+      'यह सूची इसी डिवाइस पर रहती है। इसे अपलोड नहीं किया जाता।';
+
+  @override
+  String get completedHeading => 'पूरी हुई गतिविधियाँ';
+
+  @override
+  String get categoriesHeading => 'श्रेणियाँ';
+
+  @override
+  String get recentHeading => 'हाल की';
+
+  @override
+  String get suggestionHeading => 'एक गतिविधि जो आज़मा सकते हैं';
+
+  @override
+  String get suggestionNone =>
+      'इस उम्र और भाषा के लिए अभी और कोई गतिविधि नहीं है।';
+
+  @override
+  String get openedActivity => 'खोली गई';
+
+  @override
+  String get noCategoryYet => 'अभी कोई श्रेणी नहीं।';
+
+  @override
+  String get noRecent => 'अभी कुछ हाल का नहीं है।';
+
+  @override
   String get save => 'सहेजें';
 
   @override
