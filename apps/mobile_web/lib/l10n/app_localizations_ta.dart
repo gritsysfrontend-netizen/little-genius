@@ -134,11 +134,69 @@ class AppLocalizationsTa extends AppLocalizations {
   String get accountNotAvailable => 'இந்தப் பதிப்பில் கணக்கு இல்லை.';
 
   @override
-  String get sessionNotBuilt => 'இந்தப் பதிப்பில் நேர வரம்பு இல்லை.';
-
-  @override
   String get privacyNotBuilt =>
       'இந்தப் பதிப்பில் கணக்கு ஏற்றுமதியும் நீக்கமும் இல்லை.';
+
+  @override
+  String get caregiverPurpose =>
+      'Little Genius என்பது சுமார் 1 முதல் 5 வயது குழந்தைகள் பார்க்க, கேட்க, தட்ட ஒரு அமைதியான இடம்.';
+
+  @override
+  String get caregiverPrivacy =>
+      'ஒரு புனைப்பெயர் போதும். சட்டப்பெயர், புகைப்படம், அல்லது பள்ளியை நாங்கள் கேட்பதில்லை.';
+
+  @override
+  String get caregiverAccount =>
+      'இந்தப் பதிப்பில் கணக்கு இல்லை. எதுவும் பதிவேற்றப்படாது. எதிர்காலக் கணக்கு தனித் தேர்வாக இருக்கும், அது இப்போது இயக்கப்படவில்லை.';
+
+  @override
+  String get sessionLimitTitle => 'விளையாட்டு நினைவூட்டல்';
+
+  @override
+  String get sessionLimitBody =>
+      'இந்தச் செயலியின் உள்ளே ஒரு நினைவூட்டலை அமைக்கலாம். இது தொலைபேசியைப் பூட்டாது. இது திரை நேரமோ சாதனக் கட்டுப்பாடோ அல்ல. Little Genius திறந்திருக்கும்போது மட்டுமே இது எண்ணும்.';
+
+  @override
+  String get sessionOff => 'நினைவூட்டல் இல்லை';
+
+  @override
+  String sessionMinutes(int count) {
+    return '$count நிமிடங்கள்';
+  }
+
+  @override
+  String get sessionEndedTitle => 'ஓய்வு நேரம்';
+
+  @override
+  String get sessionEndedBody =>
+      'Little Genius உள்ளே உள்ள நினைவூட்டல் முடிந்தது. இது சாதனத்தை அணைக்கவில்லை.';
+
+  @override
+  String get sessionPaused =>
+      'Little Genius பின்னணியில் இருக்கும்போது நினைவூட்டல் இடைநிறுத்தப்படும். இது தொலைபேசியைக் கட்டுப்படுத்தாது.';
+
+  @override
+  String get stateLoading => 'ஏற்றுகிறது';
+
+  @override
+  String get stateEmpty => 'இங்கே இன்னும் எதுவும் இல்லை.';
+
+  @override
+  String get stateSuccess => 'சேமிக்கப்பட்டது';
+
+  @override
+  String get stateRecoverable => 'ஏதோ தவறு நேர்ந்தது. மீண்டும் முயற்சிக்கலாம்.';
+
+  @override
+  String get stateOffline =>
+      'நீங்கள் இணைப்பில்லாமல் இருக்கிறீர்கள். சேமித்த செயல்பாடுகளை இன்னும் விளையாடலாம்.';
+
+  @override
+  String get stateRetrying => 'மீண்டும் முயல்கிறது';
+
+  @override
+  String get stateUpdateAvailable =>
+      'புதிய நகல் உள்ளது. நீங்கள் விளையாடும் நகல் அப்படியே இருக்கும்.';
 
   @override
   String get pause => 'இடைநிறுத்து';

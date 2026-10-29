@@ -10,12 +10,16 @@ class CatalogEntry {
     required this.title,
     required this.downloaded,
     this.contentVersion,
+    this.updateAvailable = false,
   });
 
   final String contentId;
   final String title;
   final bool downloaded;
   final int? contentVersion;
+
+  /// A newer published version exists. The copy already open is left as it is.
+  final bool updateAvailable;
 }
 
 /// Manifest items are shown when the request succeeds.
@@ -34,10 +38,8 @@ List<CatalogEntry> entriesForCategory({
             contentId: item.contentId,
             title: item.title,
             contentVersion: item.contentVersion,
-            downloaded:
-                localById[item.contentId]?.contentVersion ==
-                    item.contentVersion &&
-                localById[item.contentId]?.payloadSha256 == item.payloadSha256,
+            downloaded: _savedCopy(localById[item.contentId], item),
+            updateAvailable: _newer(localById[item.contentId], item),
           ),
     ];
   }
@@ -51,4 +53,16 @@ List<CatalogEntry> entriesForCategory({
       contentVersion: local?.contentVersion,
     ),
   ];
+}
+
+bool _savedCopy(StoredDocument? local, ManifestItem item) {
+  if (local == null) return false;
+  final sameVersion =
+      local.contentVersion == item.contentVersion &&
+      local.payloadSha256 == item.payloadSha256;
+  return sameVersion || item.contentVersion > local.contentVersion;
+}
+
+bool _newer(StoredDocument? local, ManifestItem item) {
+  return local != null && item.contentVersion > local.contentVersion;
 }

@@ -22,6 +22,12 @@ class LocalModeScreen extends StatelessWidget {
             ),
             const SizedBox(height: 12),
             Text(text.localBody, style: Theme.of(context).textTheme.titleLarge),
+            const SizedBox(height: 16),
+            Text(text.caregiverPurpose),
+            const SizedBox(height: 12),
+            Text(text.caregiverPrivacy),
+            const SizedBox(height: 12),
+            Text(text.caregiverAccount),
             if (kIsWeb) ...[
               const SizedBox(height: 16),
               Text(text.webStorageNote),

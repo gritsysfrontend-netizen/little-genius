@@ -226,29 +226,40 @@ class TapToLearnView extends StatelessWidget {
 }
 
 class ChildBar extends StatelessWidget {
-  const ChildBar({super.key, required this.onHome, this.onBack});
+  const ChildBar({
+    super.key,
+    required this.onHome,
+    this.onBack,
+    this.backOrder,
+    this.homeOrder,
+  });
 
   final VoidCallback onHome;
   final VoidCallback? onBack;
+  final double? backOrder;
+  final double? homeOrder;
 
   @override
   Widget build(BuildContext context) {
     final text = AppLocalizations.of(context);
     return Padding(
       padding: const EdgeInsets.fromLTRB(12, 12, 12, 0),
-      child: Row(
+      child: Wrap(
+        spacing: 12,
+        runSpacing: 12,
         children: [
           if (onBack != null)
             BigButton(
               label: text.back,
               icon: Icons.arrow_back,
+              focusOrder: backOrder,
               onPressed: onBack,
             ),
-          const Spacer(),
           BigButton(
             key: const Key('home-button'),
             label: text.goHome,
             icon: Icons.home,
+            focusOrder: homeOrder,
             onPressed: onHome,
           ),
         ],
@@ -263,21 +274,37 @@ class BigButton extends StatelessWidget {
     required this.label,
     required this.onPressed,
     this.icon,
+    this.focusOrder,
   });
 
   final String label;
   final VoidCallback? onPressed;
   final IconData? icon;
+  final double? focusOrder;
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      height: 64,
-      child: FilledButton.icon(
-        onPressed: onPressed,
-        icon: Icon(icon ?? Icons.circle),
-        label: Text(label),
+    final button = FilledButton(
+      onPressed: onPressed,
+      style: FilledButton.styleFrom(
+        minimumSize: const Size(64, 64),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        tapTargetSize: MaterialTapTargetSize.padded,
       ),
+      child: Wrap(
+        alignment: WrapAlignment.center,
+        crossAxisAlignment: WrapCrossAlignment.center,
+        spacing: 8,
+        children: [
+          ExcludeSemantics(child: Icon(icon ?? Icons.circle)),
+          Text(label, textAlign: TextAlign.center),
+        ],
+      ),
+    );
+    if (focusOrder == null) return button;
+    return FocusTraversalOrder(
+      order: NumericFocusOrder(focusOrder!),
+      child: button,
     );
   }
 }

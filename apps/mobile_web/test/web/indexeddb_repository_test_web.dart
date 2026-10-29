@@ -52,6 +52,7 @@ void main() {
         durationBucket: 'lt_1m',
       ),
     );
+    await first.setSetting('session_limit_minutes', '15');
     await first.close();
 
     final second = await IndexedDbLearningRepository.open(name: name);
@@ -65,5 +66,6 @@ void main() {
     expect(progress.single.completedCount, 1);
     expect(await second.listOutbox(profile.profileId), hasLength(2));
     expect((await second.getBlob('img.elephant.001'))!.bytes, bytes);
+    expect(await second.getSetting('session_limit_minutes'), '15');
   });
 }

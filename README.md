@@ -1,17 +1,18 @@
 # Little Genius
 
-Little Genius is a small learning app for young children. This repository is a Phase 2 slice: one elephant lesson, stored on the device, in English, Hindi, and Tamil. A grown-up creates a local profile. The child can download the lesson and play it again without a network connection.
+Little Genius is a small learning app for young children. This repository holds a local lesson slice: one elephant lesson, stored on the device, in English, Hindi, and Tamil. A grown-up creates a local profile. The child can download the lesson and play it again without a network connection. A grown-up can also set a play reminder that stays inside the app.
 
 This is not a finished product. It is not ready for a store, a school, or real child accounts.
 
 ## What you can try
 
+- Read the screen that explains local mode. An account is not required, and an account is not part of this version.
 - Create a profile with a nickname, a picture, an age band, and a language.
 - Switch the app’s buttons and labels between English, Hindi, and Tamil.
 - Download the elephant activity.
 - Tap the picture, hear the short instruction, and see that “started” and “finished” stay on the device after you close the app.
 
-The Hindi and Tamil sounds were made with a text-to-speech tool for this engineering slice. A native speaker has not signed off on them.
+The Hindi and Tamil sounds were made with a text-to-speech tool for this engineering slice. A native speaker has not signed off on them. The Hindi and Tamil sentences on the caregiver screen and the play reminder have not had native-speaker review either.
 
 ## Run the API
 
@@ -56,12 +57,27 @@ flutter run --dart-define=API_BASE_URL=http://10.0.2.2:3000
 
 Cleartext HTTP is allowed only for localhost and the emulator host. This environment does not have an Apple signing certificate or an iOS device, so the iOS app has not been compiled here.
 
+## Play reminder
+
+In the grown-up area, open Play reminder. You can leave it off or choose 5, 10, 15, or 20 minutes. The reminder counts only while Little Genius is open and in the foreground. When it finishes, the child sees a rest screen and can go home. It does not lock the phone. It is not Screen Time, and it is not a control for the whole device.
+
+Closing the app forgets how much of the current reminder has passed. The choice of minutes is kept on the device.
+
 ## Checks
 
 From `services/api` (Node.js 24 and PostgreSQL 17):
 
 ```bash
+npm run format:check
+npm run openapi:check
 npm test
+npm audit --audit-level=high
+```
+
+From the repository root:
+
+```bash
+node scripts/scan-secrets.mjs
 ```
 
 From `apps/mobile_web`:
@@ -79,8 +95,12 @@ The IndexedDB check is separate because it needs Chrome:
 flutter test --platform chrome test/web/indexeddb_repository_test.dart
 ```
 
+GitHub Actions runs those checks, plus `npm audit`, the secret scan, and `docker build` for the API image. The OpenAPI step checks that the operation list in `services/api/openapi/openapi.yaml` still matches the inventory in `services/api/scripts/check-openapi.mjs`. It is not a hosted spec diff.
+
 ## What is not built
 
-Accounts, sign-in, cloud sync, a content editor, tracing, payments, push notifications, analytics, crash reporting, and Redis are not in this slice. Session limits and account export or deletion are named in the grown-up area and are not implemented. Parent account routes exist only as schemas and an API description. The app does not upload progress.
+Accounts, sign-in, cloud sync, a content editor, tracing, payments, push notifications, analytics, crash reporting, and Redis are not in this slice. Account export and deletion are named in the grown-up area and are not implemented. Parent account routes exist only as schemas and an API description. The app does not upload progress.
+
+Staging and production cloud projects are not created here. The host has not been chosen. GitHub secret-scanning administration and a hosted OpenAPI diff are not set up from this repository. This environment has no Apple signing certificate, so the iOS app has not been compiled here.
 
 The plans and decision records live in `docs/`.

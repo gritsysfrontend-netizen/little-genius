@@ -107,6 +107,23 @@ class DriftLearningRepository implements LearningRepository {
   }
 
   @override
+  Future<void> setSetting(String key, String value) async {
+    await _db
+        .into(_db.settingRows)
+        .insertOnConflictUpdate(
+          SettingRowsCompanion.insert(key: key, value: value),
+        );
+  }
+
+  @override
+  Future<String?> getSetting(String key) async {
+    final row = await (_db.select(
+      _db.settingRows,
+    )..where((table) => table.key.equals(key))).getSingleOrNull();
+    return row?.value;
+  }
+
+  @override
   Future<void> saveDocument(StoredDocument document) async {
     await _db
         .into(_db.documentRows)

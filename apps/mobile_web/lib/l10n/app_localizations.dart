@@ -340,17 +340,113 @@ abstract class AppLocalizations {
   /// **'Accounts are not in this version.'**
   String get accountNotAvailable;
 
-  /// No description provided for @sessionNotBuilt.
-  ///
-  /// In en, this message translates to:
-  /// **'Session limits are not in this version.'**
-  String get sessionNotBuilt;
-
   /// No description provided for @privacyNotBuilt.
   ///
   /// In en, this message translates to:
   /// **'Account export and deletion are not in this version.'**
   String get privacyNotBuilt;
+
+  /// No description provided for @caregiverPurpose.
+  ///
+  /// In en, this message translates to:
+  /// **'Little Genius is a quiet place for children about 1 to 5 years old to look, listen, and tap.'**
+  String get caregiverPurpose;
+
+  /// No description provided for @caregiverPrivacy.
+  ///
+  /// In en, this message translates to:
+  /// **'A nickname is enough. We do not ask for a legal name, a photo, or a school.'**
+  String get caregiverPrivacy;
+
+  /// No description provided for @caregiverAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'An account is not part of this version. Nothing is uploaded. A future account would be a separate choice, and it is not turned on.'**
+  String get caregiverAccount;
+
+  /// No description provided for @sessionLimitTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Play reminder'**
+  String get sessionLimitTitle;
+
+  /// No description provided for @sessionLimitBody.
+  ///
+  /// In en, this message translates to:
+  /// **'You can set a reminder that stays inside this app. It does not lock the phone, and it is not Screen Time or a device control. The reminder counts only while Little Genius is open.'**
+  String get sessionLimitBody;
+
+  /// No description provided for @sessionOff.
+  ///
+  /// In en, this message translates to:
+  /// **'No reminder'**
+  String get sessionOff;
+
+  /// No description provided for @sessionMinutes.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} minutes'**
+  String sessionMinutes(int count);
+
+  /// No description provided for @sessionEndedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Time for a rest'**
+  String get sessionEndedTitle;
+
+  /// No description provided for @sessionEndedBody.
+  ///
+  /// In en, this message translates to:
+  /// **'The play reminder inside Little Genius has finished. It did not turn off the device.'**
+  String get sessionEndedBody;
+
+  /// No description provided for @sessionPaused.
+  ///
+  /// In en, this message translates to:
+  /// **'The reminder is paused while Little Genius is in the background. It does not control the phone.'**
+  String get sessionPaused;
+
+  /// No description provided for @stateLoading.
+  ///
+  /// In en, this message translates to:
+  /// **'Loading'**
+  String get stateLoading;
+
+  /// No description provided for @stateEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing here yet.'**
+  String get stateEmpty;
+
+  /// No description provided for @stateSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Saved'**
+  String get stateSuccess;
+
+  /// No description provided for @stateRecoverable.
+  ///
+  /// In en, this message translates to:
+  /// **'Something went wrong. You can try again.'**
+  String get stateRecoverable;
+
+  /// No description provided for @stateOffline.
+  ///
+  /// In en, this message translates to:
+  /// **'You are offline. Saved activities can still be played.'**
+  String get stateOffline;
+
+  /// No description provided for @stateRetrying.
+  ///
+  /// In en, this message translates to:
+  /// **'Trying again'**
+  String get stateRetrying;
+
+  /// No description provided for @stateUpdateAvailable.
+  ///
+  /// In en, this message translates to:
+  /// **'A newer copy is available. The one you are playing stays as it is.'**
+  String get stateUpdateAvailable;
 
   /// No description provided for @pause.
   ///

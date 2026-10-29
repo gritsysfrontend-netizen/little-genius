@@ -10,7 +10,9 @@ import '../../data/content_api.dart';
 import '../../data/records.dart';
 import '../../l10n/app_localizations.dart';
 import '../../routing/providers.dart';
+import '../common/app_status.dart';
 import '../common/page_frame.dart';
+import '../common/status_message.dart';
 import 'catalog.dart';
 
 class CategoryScreen extends ConsumerStatefulWidget {
@@ -25,6 +27,7 @@ class CategoryScreen extends ConsumerStatefulWidget {
 class _CategoryScreenState extends ConsumerState<CategoryScreen> {
   List<CatalogEntry> _entries = const [];
   bool _loading = true;
+  bool _offline = false;
 
   @override
   void initState() {
@@ -55,6 +58,7 @@ class _CategoryScreenState extends ConsumerState<CategoryScreen> {
     if (!mounted) return;
     setState(() {
       _loading = false;
+      _offline = failed;
       _entries = entriesForCategory(
         categoryId: widget.categoryId,
         manifest: manifest,
@@ -85,6 +89,7 @@ class _CategoryScreenState extends ConsumerState<CategoryScreen> {
       title: title,
       downloaded: true,
       contentVersion: entry.contentVersion,
+      updateAvailable: entry.updateAvailable,
     );
   }
 
@@ -106,14 +111,19 @@ class _CategoryScreenState extends ConsumerState<CategoryScreen> {
         children: [
           Text(title, style: Theme.of(context).textTheme.headlineMedium),
           const SizedBox(height: 16),
-          if (_loading) Text(text.downloading),
-          if (!_loading && _entries.isEmpty) Text(text.contentUnavailable),
+          if (_loading) const StatusMessage(status: AppStatus.loading),
+          if (!_loading && _offline)
+            const StatusMessage(status: AppStatus.offline),
+          if (!_loading && !_offline && _entries.isEmpty)
+            const StatusMessage(status: AppStatus.empty),
           for (final entry in _entries) ...[
             if (entry.title.isNotEmpty)
               Text(
                 entry.title,
                 style: Theme.of(context).textTheme.headlineSmall,
               ),
+            if (entry.updateAvailable)
+              const StatusMessage(status: AppStatus.updateAvailable),
             if (entry.downloaded)
               BigButton(
                 key: Key('play-${entry.contentId}'),
@@ -124,35 +134,63 @@ class _CategoryScreenState extends ConsumerState<CategoryScreen> {
             else
               BigButton(
                 key: Key('download-${entry.contentId}'),
-                label:
-                    download.phase == DownloadPhase.downloading &&
-                        download.contentId == entry.contentId
-                    ? text.downloading
-                    : text.downloadAction,
+                label: _downloadLabel(text, download, entry.contentId),
                 icon: Icons.download,
-                onPressed: download.phase == DownloadPhase.downloading
+                onPressed: _busy(download, entry.contentId)
                     ? null
                     : () => ref
                           .read(downloadProvider.notifier)
                           .start(entry.contentId),
               ),
-            if (download.contentId == entry.contentId &&
-                download.phase == DownloadPhase.downloading)
-              BigButton(
-                label: text.cancel,
-                icon: Icons.close,
-                onPressed: () => ref.read(downloadProvider.notifier).cancel(),
-              ),
-            if (download.contentId == entry.contentId &&
-                download.phase == DownloadPhase.failed)
-              Text(text.downloadFailed),
-            if (download.contentId == entry.contentId &&
-                download.phase == DownloadPhase.checksum)
-              Text(text.checksumError),
+            if (_matches(download, entry.contentId)) ...[
+              if (download.phase == DownloadPhase.downloading)
+                const StatusMessage(status: AppStatus.downloading),
+              if (download.phase == DownloadPhase.retrying)
+                const StatusMessage(status: AppStatus.retrying),
+              if (download.phase == DownloadPhase.failed)
+                const StatusMessage(status: AppStatus.downloadFailed),
+              if (download.phase == DownloadPhase.checksum)
+                StatusMessage(
+                  status: AppStatus.recoverableError,
+                  message: text.checksumError,
+                ),
+              if (download.phase == DownloadPhase.saved)
+                const StatusMessage(status: AppStatus.success),
+              if (_busy(download, entry.contentId))
+                BigButton(
+                  label: text.cancel,
+                  icon: Icons.close,
+                  onPressed: () => ref.read(downloadProvider.notifier).cancel(),
+                ),
+            ],
             const SizedBox(height: 16),
           ],
         ],
       ),
     );
+  }
+
+  bool _matches(DownloadState download, String contentId) {
+    return download.contentId == contentId &&
+        download.phase != DownloadPhase.idle;
+  }
+
+  bool _busy(DownloadState download, String contentId) {
+    return download.contentId == contentId &&
+        (download.phase == DownloadPhase.downloading ||
+            download.phase == DownloadPhase.retrying);
+  }
+
+  String _downloadLabel(
+    AppLocalizations text,
+    DownloadState download,
+    String contentId,
+  ) {
+    if (!_matches(download, contentId)) return text.downloadAction;
+    return switch (download.phase) {
+      DownloadPhase.downloading => text.downloading,
+      DownloadPhase.retrying => text.stateRetrying,
+      _ => text.downloadAction,
+    };
   }
 }

@@ -9,6 +9,8 @@ abstract class LearningRepository {
   Future<ChildProfile> updateProfile(ChildProfile profile);
   Future<void> setActiveProfileId(String profileId);
   Future<String?> getActiveProfileId();
+  Future<void> setSetting(String key, String value);
+  Future<String?> getSetting(String key);
 
   Future<void> saveDocument(StoredDocument document);
   Future<StoredDocument?> getDocument(String contentId, int contentVersion);

@@ -13,6 +13,7 @@
     "typecheck": "tsc --noEmit",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
+    "openapi:check": "node scripts/check-openapi.mjs",
     "test": "DATABASE_URL=postgresql://little_genius:little_genius@127.0.0.1:5432/little_genius_test prisma migrate deploy && DATABASE_URL=postgresql://little_genius:little_genius@127.0.0.1:5432/little_genius_test tsx --test test/*.test.ts",
     "prisma:generate": "prisma generate"
   },

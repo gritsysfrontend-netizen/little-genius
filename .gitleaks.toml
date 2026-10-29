@@ -1,0 +1,13 @@
+title = "Little Genius local allowlist"
+
+[extend]
+useDefault = true
+
+[allowlist]
+description = "Local demo values. They are not production secrets."
+paths = ['''(^|/)\.env\.example$''']
+regexTarget = "line"
+regexes = [
+  '''little_genius''',
+  '''local-dev-only-not-a-secret''',
+]

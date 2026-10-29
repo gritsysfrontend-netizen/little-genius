@@ -8,8 +8,11 @@ import '../features/onboarding/language_screen.dart';
 import '../features/onboarding/local_mode_screen.dart';
 import '../features/onboarding/profile_screen.dart';
 import '../features/onboarding/welcome_screen.dart';
+import '../features/common/app_status.dart';
+import '../features/common/status_message.dart';
 import '../features/parent/gate_screen.dart';
 import '../features/parent/parent_screens.dart';
+import '../features/parent/rest_screen.dart';
 import '../features/player/player_screen.dart';
 import 'lock_on_show.dart';
 import 'providers.dart';
@@ -27,6 +30,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         sessionLoading: session.isLoading,
         hasProfile: session.asData?.value != null,
         gateUnlocked: ref.read(parentGateProvider),
+        sessionEnded: ref.read(playReminderProvider).ended,
       );
     },
     routes: [
@@ -88,6 +92,11 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         path: '/parent/progress',
         builder: (context, state) => const ProgressScreen(),
       ),
+      GoRoute(
+        path: '/parent/session',
+        builder: (context, state) => const SessionLimitScreen(),
+      ),
+      GoRoute(path: '/rest', builder: (context, state) => const RestScreen()),
     ],
   );
   ref.onDispose(router.dispose);
@@ -100,7 +109,17 @@ class _LoadingScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const Scaffold(
-      body: SafeArea(child: Center(child: Text('Little Genius'))),
+      body: SafeArea(
+        child: Center(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text('Little Genius'),
+              StatusMessage(status: AppStatus.loading),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }

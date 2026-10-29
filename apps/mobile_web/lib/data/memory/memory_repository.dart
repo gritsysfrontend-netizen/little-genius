@@ -8,6 +8,7 @@ import '../records.dart';
 /// In-memory store used by widget tests and as the reference for both drivers.
 class MemoryLearningRepository implements LearningRepository {
   final Map<String, ChildProfile> _profiles = {};
+  final Map<String, String> _settings = {};
   String? _active;
   final Map<String, StoredDocument> _documents = {};
   final Map<String, StoredBlob> _blobs = {};
@@ -72,6 +73,18 @@ class MemoryLearningRepository implements LearningRepository {
   Future<String?> getActiveProfileId() async {
     _check();
     return _active;
+  }
+
+  @override
+  Future<void> setSetting(String key, String value) async {
+    _check();
+    _settings[key] = value;
+  }
+
+  @override
+  Future<String?> getSetting(String key) async {
+    _check();
+    return _settings[key];
   }
 
   @override
