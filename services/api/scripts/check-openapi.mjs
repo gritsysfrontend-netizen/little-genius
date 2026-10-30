@@ -42,6 +42,10 @@ const publicExpected = [
   'deleteProfile',
   'syncEvents',
   'getProgress',
+  'recordConsent',
+  'exportAccount',
+  'deleteAccount',
+  'getPrivacyRequest',
 ];
 
 const adminExpected = [

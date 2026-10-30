@@ -180,11 +180,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get profilesTitle => 'Profiles';
 
   @override
-  String get accountNotAvailable => 'Accounts are not in this version.';
+  String get accountNotAvailable =>
+      'This page stays on this device. Nothing here is uploaded.';
 
   @override
   String get privacyNotBuilt =>
-      'Account export and deletion are not in this version.';
+      'Export and deletion finish only after a server job completes. A waiting job is not a finished deletion.';
 
   @override
   String get caregiverPurpose =>
@@ -196,7 +197,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get caregiverAccount =>
-      'An account is not part of this version. Nothing is uploaded. A future account would be a separate choice, and it is not turned on.';
+      'You can continue with no account and no network. Nothing is uploaded unless you later choose an account and record consent. This is not a legal sign-off. Web stays on this device.';
 
   @override
   String get sessionLimitTitle => 'Play reminder';
@@ -343,4 +344,42 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get avatarFish => 'Fish';
+
+  @override
+  String get accountTitle => 'Optional account';
+
+  @override
+  String get consentNotLegal => 'This consent is not a legal sign-off.';
+
+  @override
+  String get uploadExplain =>
+      'If you continue, an account can upload the nickname, avatar, age band, language, bilingual flag, and started or completed activities. It does not upload taps, recordings, or free text.';
+
+  @override
+  String get cancelLeavesDevice => 'Cancel leaves this device as it was.';
+
+  @override
+  String get webStaysLocal =>
+      'This browser stays in local mode. Sign-in is not stored in the browser.';
+
+  @override
+  String get cognitoNotConfigured =>
+      'Amazon Cognito is not configured, so nothing was uploaded.';
+
+  @override
+  String get deletionNeedsNetwork =>
+      'A network connection is required to finish deletion.';
+
+  @override
+  String get deletionPending =>
+      'Deletion is not finished. A job is still waiting.';
+
+  @override
+  String get deletionFinished => 'Deletion finished.';
+
+  @override
+  String get consentRequired => 'Record consent before anything is uploaded.';
+
+  @override
+  String get requestDeletion => 'Request deletion';
 }

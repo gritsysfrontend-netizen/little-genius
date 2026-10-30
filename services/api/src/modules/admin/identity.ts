@@ -17,6 +17,7 @@ export type AccessClaims = {
   aud: 'staff' | 'parent';
   amr: string[];
   roles: StaffRole[];
+  reauthenticated: boolean;
 };
 
 export interface IdentityProvider {
@@ -29,6 +30,7 @@ const claimsSchema = z
     aud: z.enum(['staff', 'parent']),
     amr: z.array(z.string().min(1).max(40)).max(8).optional(),
     roles: z.array(z.enum(staffRoles)).max(staffRoles.length).optional(),
+    reauthenticated: z.boolean().optional(),
   })
   .strict();
 
@@ -52,6 +54,7 @@ export class TestIdentityProvider implements IdentityProvider {
         aud: parsed.data.aud,
         amr: parsed.data.amr ?? [],
         roles: parsed.data.roles ?? [],
+        reauthenticated: parsed.data.reauthenticated === true,
       };
     } catch {
       return null;
@@ -70,13 +73,15 @@ export function testAuthorization(input: {
   aud?: 'staff' | 'parent';
   mfa?: boolean;
   roles?: StaffRole[];
+  reauthenticated?: boolean;
 }): string {
-  const claims = {
+  const claims: Record<string, unknown> = {
     sub: input.sub,
     aud: input.aud ?? 'staff',
     amr: input.mfa === false ? [] : ['mfa'],
     roles: input.roles ?? [],
   };
+  if (input.reauthenticated === true) claims.reauthenticated = true;
   return `Bearer test.${Buffer.from(JSON.stringify(claims)).toString('base64url')}`;
 }
 

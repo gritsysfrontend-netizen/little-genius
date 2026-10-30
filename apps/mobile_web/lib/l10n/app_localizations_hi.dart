@@ -180,10 +180,12 @@ class AppLocalizationsHi extends AppLocalizations {
   String get profilesTitle => 'प्रोफ़ाइल';
 
   @override
-  String get accountNotAvailable => 'इस संस्करण में खाता नहीं है।';
+  String get accountNotAvailable =>
+      'यह पन्ना इसी डिवाइस पर रहता है। यहाँ से कुछ अपलोड नहीं होता।';
 
   @override
-  String get privacyNotBuilt => 'इस संस्करण में खाता निर्यात और हटाना नहीं है।';
+  String get privacyNotBuilt =>
+      'निर्यात और हटाना तब पूरा होता है जब सर्वर का काम खत्म हो। रुका हुआ काम पूरा हटना नहीं है।';
 
   @override
   String get caregiverPurpose =>
@@ -195,7 +197,7 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get caregiverAccount =>
-      'इस संस्करण में खाता नहीं है। कुछ भी अपलोड नहीं होता। आगे चलकर खाता एक अलग चुनाव होगा, और वह अभी चालू नहीं है।';
+      'आप बिना खाते और बिना नेटवर्क के आगे बढ़ सकते हैं। जब तक आप बाद में खाता चुनकर सहमति न लिखें, कुछ अपलोड नहीं होता। यह कानूनी मंजूरी नहीं है। वेब इसी डिवाइस पर रहता है।';
 
   @override
   String get sessionLimitTitle => 'खेलने की याद';
@@ -342,4 +344,41 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get avatarFish => 'मछली';
+
+  @override
+  String get accountTitle => 'वैकल्पिक खाता';
+
+  @override
+  String get consentNotLegal => 'यह सहमति कानूनी मंजूरी नहीं है।';
+
+  @override
+  String get uploadExplain =>
+      'अगर आप आगे बढ़ते हैं, तो खाता उपनाम, चित्र, आयु वर्ग, भाषा, द्विभाषी विकल्प, और शुरू या पूरी हुई गतिविधियाँ अपलोड कर सकता है। टैप, रिकॉर्डिंग, या खुला लेख अपलोड नहीं होता।';
+
+  @override
+  String get cancelLeavesDevice =>
+      'रद्द करने पर यह डिवाइस जैसा था वैसा ही रहता है।';
+
+  @override
+  String get webStaysLocal =>
+      'यह ब्राउज़र इसी डिवाइस पर रहता है। साइन-इन यहाँ सहेजा नहीं जाता।';
+
+  @override
+  String get cognitoNotConfigured =>
+      'Amazon Cognito सेट नहीं है, इसलिए कुछ अपलोड नहीं हुआ।';
+
+  @override
+  String get deletionNeedsNetwork => 'हटाना पूरा करने के लिए नेटवर्क चाहिए।';
+
+  @override
+  String get deletionPending => 'हटाना पूरा नहीं हुआ। एक काम अभी रुका है।';
+
+  @override
+  String get deletionFinished => 'हटाना पूरा हुआ।';
+
+  @override
+  String get consentRequired => 'कुछ अपलोड करने से पहले सहमति लिखें।';
+
+  @override
+  String get requestDeletion => 'हटाने का अनुरोध';
 }

@@ -181,11 +181,12 @@ class AppLocalizationsTa extends AppLocalizations {
   String get profilesTitle => 'சுயவிவரங்கள்';
 
   @override
-  String get accountNotAvailable => 'இந்தப் பதிப்பில் கணக்கு இல்லை.';
+  String get accountNotAvailable =>
+      'இந்தப் பக்கம் இந்தச் சாதனத்திலேயே இருக்கும். இங்கிருந்து எதுவும் பதிவேற்றப்படாது.';
 
   @override
   String get privacyNotBuilt =>
-      'இந்தப் பதிப்பில் கணக்கு ஏற்றுமதியும் நீக்கமும் இல்லை.';
+      'ஏற்றுமதியும் நீக்கமும் சேவையக வேலை முடிந்த பிறகே நிறைவு. காத்திருக்கும் வேலை முடிந்த நீக்கம் அல்ல.';
 
   @override
   String get caregiverPurpose =>
@@ -197,7 +198,7 @@ class AppLocalizationsTa extends AppLocalizations {
 
   @override
   String get caregiverAccount =>
-      'இந்தப் பதிப்பில் கணக்கு இல்லை. எதுவும் பதிவேற்றப்படாது. எதிர்காலக் கணக்கு தனித் தேர்வாக இருக்கும், அது இப்போது இயக்கப்படவில்லை.';
+      'கணக்கு இல்லாமலும் வலையமைப்பு இல்லாமலும் தொடரலாம். நீங்கள் பின்னர் கணக்கைத் தேர்ந்தெடுத்து ஒப்புதல் பதிவு செய்யும் வரை எதுவும் பதிவேற்றப்படாது. இது சட்ட ஒப்புதல் அல்ல. வலை இந்தச் சாதனத்திலேயே இருக்கும்.';
 
   @override
   String get sessionLimitTitle => 'விளையாட்டு நினைவூட்டல்';
@@ -344,4 +345,43 @@ class AppLocalizationsTa extends AppLocalizations {
 
   @override
   String get avatarFish => 'மீன்';
+
+  @override
+  String get accountTitle => 'விருப்பக் கணக்கு';
+
+  @override
+  String get consentNotLegal => 'இந்த ஒப்புதல் சட்ட ஒப்புதல் அல்ல.';
+
+  @override
+  String get uploadExplain =>
+      'தொடர்ந்தால் கணக்கு புனைப்பெயர், படம், வயதுப் பிரிவு, மொழி, இருமொழி தேர்வு, தொடங்கிய அல்லது முடிந்த செயல்களைப் பதிவேற்றலாம். தட்டல்கள், பதிவுகள், அல்லது திறந்த எழுத்து பதிவேற்றப்படாது.';
+
+  @override
+  String get cancelLeavesDevice =>
+      'ரத்து செய்தால் இந்தச் சாதனம் இருந்தபடியே இருக்கும்.';
+
+  @override
+  String get webStaysLocal =>
+      'இந்த உலாவி இந்தச் சாதனத்திலேயே இருக்கும். உள்நுழைவு இங்கு சேமிக்கப்படாது.';
+
+  @override
+  String get cognitoNotConfigured =>
+      'Amazon Cognito அமைக்கப்படவில்லை, எனவே எதுவும் பதிவேற்றப்படவில்லை.';
+
+  @override
+  String get deletionNeedsNetwork => 'நீக்கத்தை முடிக்க வலையமைப்பு வேண்டும்.';
+
+  @override
+  String get deletionPending =>
+      'நீக்கம் முடியவில்லை. ஒரு வேலை இன்னும் காத்திருக்கிறது.';
+
+  @override
+  String get deletionFinished => 'நீக்கம் முடிந்தது.';
+
+  @override
+  String get consentRequired =>
+      'எதையும் பதிவேற்றும் முன் ஒப்புதலைப் பதிவு செய்யுங்கள்.';
+
+  @override
+  String get requestDeletion => 'நீக்கத்தைக் கோரு';
 }

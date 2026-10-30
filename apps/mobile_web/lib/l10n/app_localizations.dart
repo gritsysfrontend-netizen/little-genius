@@ -427,13 +427,13 @@ abstract class AppLocalizations {
   /// No description provided for @accountNotAvailable.
   ///
   /// In en, this message translates to:
-  /// **'Accounts are not in this version.'**
+  /// **'This page stays on this device. Nothing here is uploaded.'**
   String get accountNotAvailable;
 
   /// No description provided for @privacyNotBuilt.
   ///
   /// In en, this message translates to:
-  /// **'Account export and deletion are not in this version.'**
+  /// **'Export and deletion finish only after a server job completes. A waiting job is not a finished deletion.'**
   String get privacyNotBuilt;
 
   /// No description provided for @caregiverPurpose.
@@ -451,7 +451,7 @@ abstract class AppLocalizations {
   /// No description provided for @caregiverAccount.
   ///
   /// In en, this message translates to:
-  /// **'An account is not part of this version. Nothing is uploaded. A future account would be a separate choice, and it is not turned on.'**
+  /// **'You can continue with no account and no network. Nothing is uploaded unless you later choose an account and record consent. This is not a legal sign-off. Web stays on this device.'**
   String get caregiverAccount;
 
   /// No description provided for @sessionLimitTitle.
@@ -717,6 +717,72 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Fish'**
   String get avatarFish;
+
+  /// No description provided for @accountTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Optional account'**
+  String get accountTitle;
+
+  /// No description provided for @consentNotLegal.
+  ///
+  /// In en, this message translates to:
+  /// **'This consent is not a legal sign-off.'**
+  String get consentNotLegal;
+
+  /// No description provided for @uploadExplain.
+  ///
+  /// In en, this message translates to:
+  /// **'If you continue, an account can upload the nickname, avatar, age band, language, bilingual flag, and started or completed activities. It does not upload taps, recordings, or free text.'**
+  String get uploadExplain;
+
+  /// No description provided for @cancelLeavesDevice.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel leaves this device as it was.'**
+  String get cancelLeavesDevice;
+
+  /// No description provided for @webStaysLocal.
+  ///
+  /// In en, this message translates to:
+  /// **'This browser stays in local mode. Sign-in is not stored in the browser.'**
+  String get webStaysLocal;
+
+  /// No description provided for @cognitoNotConfigured.
+  ///
+  /// In en, this message translates to:
+  /// **'Amazon Cognito is not configured, so nothing was uploaded.'**
+  String get cognitoNotConfigured;
+
+  /// No description provided for @deletionNeedsNetwork.
+  ///
+  /// In en, this message translates to:
+  /// **'A network connection is required to finish deletion.'**
+  String get deletionNeedsNetwork;
+
+  /// No description provided for @deletionPending.
+  ///
+  /// In en, this message translates to:
+  /// **'Deletion is not finished. A job is still waiting.'**
+  String get deletionPending;
+
+  /// No description provided for @deletionFinished.
+  ///
+  /// In en, this message translates to:
+  /// **'Deletion finished.'**
+  String get deletionFinished;
+
+  /// No description provided for @consentRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Record consent before anything is uploaded.'**
+  String get consentRequired;
+
+  /// No description provided for @requestDeletion.
+  ///
+  /// In en, this message translates to:
+  /// **'Request deletion'**
+  String get requestDeletion;
 }
 
 class _AppLocalizationsDelegate

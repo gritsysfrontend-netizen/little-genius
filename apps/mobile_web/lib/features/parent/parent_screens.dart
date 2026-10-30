@@ -71,6 +71,13 @@ class ParentHomeScreen extends ConsumerWidget {
           ),
           const SizedBox(height: 12),
           BigButton(
+            key: const Key('parent-account'),
+            label: text.accountTitle,
+            icon: Icons.manage_accounts_outlined,
+            onPressed: () => context.go('/parent/account'),
+          ),
+          const SizedBox(height: 12),
+          BigButton(
             key: const Key('parent-session'),
             focusOrder: 5,
             label: text.sessionLimitTitle,

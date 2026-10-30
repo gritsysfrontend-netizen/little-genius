@@ -97,7 +97,7 @@ test('a new lesson cannot be published through the fixture path', () => {
   }
 });
 
-test('phase 5 profile schemas are documented and not routed', () => {
+test('phase 5 profile schemas are documented and routed outside content', () => {
   const openapi = parseYaml(readFileSync(path.join(here, '../openapi/openapi.yaml'), 'utf8')) as {
     paths: Record<string, Record<string, { operationId?: string }>>;
   };
@@ -153,4 +153,7 @@ test('phase 5 profile schemas are documented and not routed', () => {
   assert.equal(routes.includes('child_profile'), false);
   assert.equal(routes.includes('nickname'), false);
   assert.equal(routes.includes('/profiles'), false);
+  const accounts = readFileSync(path.join(here, '../src/modules/accounts/routes.ts'), 'utf8');
+  assert.equal(accounts.includes('/profiles'), true);
+  assert.equal(accounts.includes('/privacy/delete-account'), true);
 });

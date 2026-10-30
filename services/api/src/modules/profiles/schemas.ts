@@ -1,8 +1,8 @@
 import { z } from 'zod';
 
 /**
- * Frozen Phase 5 shapes. The Phase 2 server does not mount these routes.
- * Local profiles are stored only on the device.
+ * Profile and progress shapes. Local mode still stores these only on the device.
+ * Account mode uses the same shapes on the server after consent.
  */
 
 const nickname = z.string().min(1).max(24);

@@ -3,8 +3,9 @@ info:
   title: Little Genius API
   version: 0.1.0-draft
   description: >
-    Phase 2 mounts health and published-content routes only. Profile and progress
-    routes are frozen here for Phase 5 and are not implemented.
+    Health, published content, parent profiles, progress, consent, and privacy
+    jobs. Web stays local-mode. Cognito settings are public environment values.
+    This file does not contain a client secret or a user pool.
 servers:
   - url: https://api.example.invalid/api/v1
     description: Host is not chosen. example.invalid is a placeholder.
@@ -147,7 +148,7 @@ paths:
       security: [{ parentBearer: [] }]
       responses:
         '200':
-          description: Profiles owned by the caller. Not mounted in Phase 2.
+          description: Profiles owned by the caller.
           content:
             application/json:
               schema:
@@ -171,11 +172,17 @@ paths:
             schema: { $ref: '#/components/schemas/ProfileCreate' }
       responses:
         '201':
-          description: Created. Not mounted in Phase 2.
+          description: Created.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ChildProfile' }
+        '200':
+          description: Same Idempotency-Key or same clientProfileId for this parent.
           content:
             application/json:
               schema: { $ref: '#/components/schemas/ChildProfile' }
         '401': { $ref: '#/components/responses/Error' }
+        '403': { $ref: '#/components/responses/Error' }
         '409': { $ref: '#/components/responses/Error' }
   /profiles/{profileId}:
     parameters:
@@ -185,7 +192,7 @@ paths:
       security: [{ parentBearer: [] }]
       responses:
         '200':
-          description: Not mounted in Phase 2.
+          description: Parent route.
           content:
             application/json:
               schema: { $ref: '#/components/schemas/ChildProfile' }
@@ -197,7 +204,7 @@ paths:
       security: [{ parentBearer: [] }]
       responses:
         '202':
-          description: Not mounted in Phase 2.
+          description: Parent route.
         '401': { $ref: '#/components/responses/Error' }
         '404': { $ref: '#/components/responses/Error' }
   /profiles/{profileId}/events:batch:
@@ -206,21 +213,85 @@ paths:
       security: [{ parentBearer: [] }]
       responses:
         '200':
-          description: Not mounted in Phase 2.
+          description: Parent route.
           content:
             application/json:
               schema: { $ref: '#/components/schemas/EventBatchResult' }
         '401': { $ref: '#/components/responses/Error' }
+        '404': { $ref: '#/components/responses/Error' }
+        '409': { $ref: '#/components/responses/Error' }
+        '413': { $ref: '#/components/responses/Error' }
   /profiles/{profileId}/progress:
     get:
       operationId: getProgress
       security: [{ parentBearer: [] }]
       responses:
         '200':
-          description: Not mounted in Phase 2.
+          description: Parent route.
           content:
             application/json:
               schema: { $ref: '#/components/schemas/Progress' }
+        '401': { $ref: '#/components/responses/Error' }
+        '404': { $ref: '#/components/responses/Error' }
+  /privacy/consent:
+    post:
+      operationId: recordConsent
+      security: [{ parentBearer: [] }]
+      parameters:
+        - $ref: '#/components/parameters/IdempotencyKey'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/ConsentCreate' }
+      responses:
+        '201':
+          description: Consent recorded. The notice is not a legal sign-off.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ConsentRecord' }
+        '401': { $ref: '#/components/responses/Error' }
+  /privacy/export:
+    post:
+      operationId: exportAccount
+      security: [{ parentBearer: [] }]
+      parameters:
+        - $ref: '#/components/parameters/IdempotencyKey'
+      responses:
+        '202':
+          description: Export job accepted. Status stays pending until the job finishes. No download link is returned.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/PrivacyJob' }
+        '401': { $ref: '#/components/responses/Error' }
+  /privacy/delete-account:
+    post:
+      operationId: deleteAccount
+      security: [{ parentBearer: [] }]
+      parameters:
+        - $ref: '#/components/parameters/IdempotencyKey'
+      responses:
+        '202':
+          description: Deletion requested. Status is pending while the job is unfinished. Sync stops and sessions are revoked.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/PrivacyJob' }
+        '401': { $ref: '#/components/responses/Error' }
+  /privacy/requests/{jobId}:
+    get:
+      operationId: getPrivacyRequest
+      security: [{ parentBearer: [] }]
+      parameters:
+        - name: jobId
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
+      responses:
+        '200':
+          description: Job status. pending is not a finished deletion.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/PrivacyJob' }
         '401': { $ref: '#/components/responses/Error' }
         '404': { $ref: '#/components/responses/Error' }
 components:
@@ -540,3 +611,28 @@ components:
               startedCount: { type: integer, minimum: 0 }
               completedCount: { type: integer, minimum: 0 }
               lastActivityAt: { type: ['string', 'null'], format: date-time }
+    ConsentCreate:
+      type: object
+      additionalProperties: false
+      required: [purpose, noticeVersion, decision]
+      properties:
+        purpose: { type: string, enum: [account_sync] }
+        noticeVersion: { type: string, enum: [account-sync-1] }
+        decision: { type: string, enum: [granted] }
+    ConsentRecord:
+      type: object
+      additionalProperties: false
+      required: [recordId, purpose, noticeVersion, decision]
+      properties:
+        recordId: { type: string, format: uuid }
+        purpose: { type: string }
+        noticeVersion: { type: string }
+        decision: { type: string }
+    PrivacyJob:
+      type: object
+      additionalProperties: false
+      required: [jobId, jobType, status]
+      properties:
+        jobId: { type: string, format: uuid }
+        jobType: { type: string, enum: [export_account, delete_account] }
+        status: { type: string, enum: [pending, running, completed, failed] }

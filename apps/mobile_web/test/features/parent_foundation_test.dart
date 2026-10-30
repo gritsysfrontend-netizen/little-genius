@@ -201,6 +201,10 @@ void main() {
     await tester.enterText(find.byKey(const Key('gate-answer')), '7');
     await tester.tap(find.byKey(const Key('gate-continue')));
     await tester.pumpAndSettle();
+    await tester.scrollUntilVisible(
+      find.byKey(const Key('parent-session')),
+      400,
+    );
     await tester.tap(find.byKey(const Key('parent-session')));
     await tester.pumpAndSettle();
     expect(tester.takeException(), isNull);

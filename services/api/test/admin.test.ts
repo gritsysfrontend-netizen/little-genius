@@ -21,7 +21,9 @@ const config: AppConfig = {
   rateLesson: 120,
   rateAsset: 120,
   rateAdmin: 60,
+  rateEvents: 30,
   identityProvider: 'deny',
+  cognito: null,
   assetUrlTtlSeconds: 300,
   host: '127.0.0.1',
   port: 3000,
@@ -132,7 +134,9 @@ test('a parent token and a missing role are rejected on staff routes', async () 
     headers: { ...auth('admin-test-author', ['publisher']), 'content-type': 'application/json' },
     payload: {},
   });
-  assert.equal(profiles.statusCode, 404);
+  assert.equal(profiles.statusCode, 401);
+  assert.equal(profiles.json().error.code, 'UNAUTHENTICATED');
+  assert.equal(profiles.json().error.message, 'Parent sign-in is required.');
 });
 
 test('the test identity provider is not the default', async () => {
