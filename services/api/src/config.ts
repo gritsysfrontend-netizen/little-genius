@@ -1,3 +1,5 @@
+import { loadCognitoPublicConfig, type CognitoPublicConfig } from './modules/accounts/cognito.js';
+
 export type AppConfig = {
   assetSigningKey: string;
   publicBaseUrl: string;
@@ -7,7 +9,9 @@ export type AppConfig = {
   rateLesson: number;
   rateAsset: number;
   rateAdmin: number;
-  identityProvider: 'test' | 'deny';
+  rateEvents: number;
+  identityProvider: 'test' | 'deny' | 'cognito';
+  cognito: CognitoPublicConfig | null;
   assetUrlTtlSeconds: number;
   host: string;
   port: number;
@@ -36,7 +40,14 @@ export function loadConfig(env: NodeJS.ProcessEnv = process.env): AppConfig {
     rateLesson: numberEnv(env.RATE_LIMIT_LESSON, 120),
     rateAsset: numberEnv(env.RATE_LIMIT_ASSET, 120),
     rateAdmin: numberEnv(env.RATE_LIMIT_ADMIN, 60),
-    identityProvider: env.IDENTITY_PROVIDER === 'test' ? 'test' : 'deny',
+    rateEvents: numberEnv(env.RATE_LIMIT_EVENTS, 30),
+    identityProvider:
+      env.IDENTITY_PROVIDER === 'test'
+        ? 'test'
+        : env.IDENTITY_PROVIDER === 'cognito'
+          ? 'cognito'
+          : 'deny',
+    cognito: loadCognitoPublicConfig(env),
     assetUrlTtlSeconds: numberEnv(env.ASSET_URL_TTL_SECONDS, 300),
     host: env.HOST ?? '127.0.0.1',
     port: numberEnv(env.PORT, 3000),

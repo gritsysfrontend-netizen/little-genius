@@ -10,6 +10,7 @@ import '../features/onboarding/profile_screen.dart';
 import '../features/onboarding/welcome_screen.dart';
 import '../features/common/app_status.dart';
 import '../features/common/status_message.dart';
+import '../features/parent/account_screen.dart';
 import '../features/parent/gate_screen.dart';
 import '../features/parent/parent_screens.dart';
 import '../features/parent/rest_screen.dart';
@@ -95,6 +96,10 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: '/parent/session',
         builder: (context, state) => const SessionLimitScreen(),
+      ),
+      GoRoute(
+        path: '/parent/account',
+        builder: (context, state) => const AccountScreen(),
       ),
       GoRoute(path: '/rest', builder: (context, state) => const RestScreen()),
     ],

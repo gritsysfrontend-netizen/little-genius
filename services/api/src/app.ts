@@ -5,6 +5,8 @@ import type { PrismaClient } from '@prisma/client';
 import Fastify, { type FastifyInstance, type FastifyServerOptions } from 'fastify';
 import type { AppConfig } from './config.js';
 import { errorBody } from './errors.js';
+import { registerAccountRoutes } from './modules/accounts/routes.js';
+import { CognitoIdentityProvider } from './modules/accounts/cognito.js';
 import { registerAdminRoutes } from './modules/admin/routes.js';
 import {
   DenyIdentityProvider,
@@ -38,7 +40,14 @@ export async function buildApp(options: BuildAppOptions): Promise<FastifyInstanc
     origin: true,
     credentials: false,
     methods: ['GET', 'HEAD', 'POST', 'PATCH', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['authorization', 'content-type', 'x-request-id', 'x-asset-id'],
+    allowedHeaders: [
+      'authorization',
+      'content-type',
+      'x-request-id',
+      'x-asset-id',
+      'idempotency-key',
+      'if-match',
+    ],
   });
 
   await app.register(rateLimit, {
@@ -67,6 +76,13 @@ export async function buildApp(options: BuildAppOptions): Promise<FastifyInstanc
       'request failed',
     );
     const status = known.statusCode ?? 500;
+    if (status === 413) {
+      return reply
+        .code(413)
+        .send(
+          errorBody('PAYLOAD_TOO_LARGE', 'The request is too large.', String(request.id), false),
+        );
+    }
     if (status === 429) {
       return reply
         .code(429)
@@ -106,7 +122,16 @@ export async function buildApp(options: BuildAppOptions): Promise<FastifyInstanc
     options.identity ??
     (options.config.identityProvider === 'test'
       ? new TestIdentityProvider()
-      : new DenyIdentityProvider());
+      : options.config.identityProvider === 'cognito' && options.config.cognito
+        ? new CognitoIdentityProvider(options.config.cognito)
+        : new DenyIdentityProvider());
+
+  await app.register(
+    async (scope) => {
+      registerAccountRoutes(scope, options.prisma, options.config, identity);
+    },
+    { prefix: '/api/v1' },
+  );
 
   await app.register(
     async (scope) => {

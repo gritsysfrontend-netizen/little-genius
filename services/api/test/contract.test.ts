@@ -25,7 +25,9 @@ const config: AppConfig = {
   rateLesson: 120,
   rateAsset: 120,
   rateAdmin: 60,
+  rateEvents: 30,
   identityProvider: 'deny',
+  cognito: null,
   assetUrlTtlSeconds: 300,
   host: '127.0.0.1',
   port: 3000,
@@ -395,14 +397,15 @@ test('published content is rate limited', async () => {
   await limited.close();
 });
 
-test('parent account routes are not mounted', async () => {
+test('parent account routes require a parent token', async () => {
   const response = await app.inject({
     method: 'POST',
     url: '/api/v1/profiles',
     headers: { 'content-type': 'application/json' },
     payload: {},
   });
-  assert.equal(response.statusCode, 404);
+  assert.equal(response.statusCode, 401);
+  assert.equal(response.json().error.code, 'UNAUTHENTICATED');
   assert.notEqual(response.statusCode, 201);
 });
 

@@ -8,7 +8,7 @@ datasource db {
 }
 
 /// Immutable render document. The SQL migration adds the published-row trigger
-/// and the payload-is-object check. Parent account tables are not created in Phase 2.
+/// and the payload-is-object check. Parent account tables are in the Phase 5 migration.
 model ContentVersion {
   contentId       String @map("content_id")
   contentVersion  Int    @map("content_version")
@@ -152,4 +152,115 @@ model ContentAuditEvent {
 
   @@index([at])
   @@map("content_audit_events")
+}
+
+/// The IdP subject is stored here. Email and phone stay at the identity provider.
+model ParentAccount {
+  id                String    @id @default(uuid()) @db.Uuid
+  authProviderSub   String    @unique @map("auth_provider_sub")
+  consentStatus     String    @default("none") @map("consent_status")
+  createdAt         DateTime  @default(now()) @map("created_at")
+  deletedAt         DateTime? @map("deleted_at")
+  sessionsRevokedAt DateTime? @map("sessions_revoked_at")
+
+  profiles        ChildProfile[]
+  consents        ConsentRecord[]
+  idempotencyKeys IdempotencyKey[]
+  jobs            JobOutbox[]
+
+  @@map("parent_accounts")
+}
+
+model ChildProfile {
+  id              String    @id @db.Uuid
+  parentAccountId String    @map("parent_account_id") @db.Uuid
+  nickname        String
+  avatarId        String    @map("avatar_id")
+  ageBand         String    @map("age_band")
+  preferredLocale String    @map("preferred_locale")
+  bilingualMode   Boolean   @map("bilingual_mode")
+  revision        Int
+  deletedAt       DateTime? @map("deleted_at")
+
+  parent    ParentAccount     @relation(fields: [parentAccountId], references: [id], onDelete: Restrict)
+  events    LearningEvent[]
+  summaries ProgressSummary[]
+
+  @@index([parentAccountId])
+  @@map("child_profiles")
+}
+
+model LearningEvent {
+  eventId        String   @id @map("event_id") @db.Uuid
+  profileId      String   @map("profile_id") @db.Uuid
+  contentId      String   @map("content_id")
+  contentVersion Int      @map("content_version")
+  eventType      String   @map("event_type")
+  durationBucket String?  @map("duration_bucket")
+  occurredAt     DateTime @map("occurred_at")
+
+  profile ChildProfile @relation(fields: [profileId], references: [id], onDelete: Restrict)
+
+  @@index([profileId])
+  @@map("learning_events")
+}
+
+model ProgressSummary {
+  profileId      String    @map("profile_id") @db.Uuid
+  categoryId     String    @map("category_id")
+  startedCount   Int       @default(0) @map("started_count")
+  completedCount Int       @default(0) @map("completed_count")
+  lastActivityAt DateTime? @map("last_activity_at")
+
+  profile ChildProfile @relation(fields: [profileId], references: [id], onDelete: Restrict)
+
+  @@id([profileId, categoryId])
+  @@map("progress_summaries")
+}
+
+/// Kept when an account is deleted. The foreign key is ON DELETE RESTRICT.
+model ConsentRecord {
+  recordId        String   @id @default(uuid()) @map("record_id") @db.Uuid
+  parentAccountId String   @map("parent_account_id") @db.Uuid
+  purpose         String
+  noticeVersion   String   @map("notice_version")
+  decision        String
+  createdAt       DateTime @default(now()) @map("created_at")
+
+  parent ParentAccount @relation(fields: [parentAccountId], references: [id], onDelete: Restrict)
+
+  @@index([parentAccountId])
+  @@map("consent_records")
+}
+
+model IdempotencyKey {
+  parentAccountId String   @map("parent_account_id") @db.Uuid
+  key             String   @db.Uuid
+  requestSha256   String   @map("request_sha256")
+  statusCode      Int      @map("status_code")
+  responseBody    Json     @map("response_body")
+  createdAt       DateTime @default(now()) @map("created_at")
+
+  parent ParentAccount @relation(fields: [parentAccountId], references: [id], onDelete: Restrict)
+
+  @@id([parentAccountId, key])
+  @@map("idempotency_keys")
+}
+
+/// Operational job arguments. This JSON is not a lesson document.
+model JobOutbox {
+  jobId           String    @id @default(uuid()) @map("job_id") @db.Uuid
+  parentAccountId String    @map("parent_account_id") @db.Uuid
+  jobType         String    @map("job_type")
+  payload         Json
+  status          String    @default("pending")
+  availableAt     DateTime  @default(now()) @map("available_at")
+  attempts        Int       @default(0)
+  result          Json?
+  finishedAt      DateTime? @map("finished_at")
+
+  parent ParentAccount @relation(fields: [parentAccountId], references: [id], onDelete: Restrict)
+
+  @@index([status, availableAt])
+  @@map("job_outbox")
 }

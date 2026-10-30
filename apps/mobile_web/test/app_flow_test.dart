@@ -32,7 +32,7 @@ void main() {
     expect(find.text('இது இந்தச் சாதனத்திலேயே இருக்கும்'), findsOneWidget);
     expect(
       find.text(
-        'இந்தப் பதிப்பில் கணக்கு இல்லை. எதுவும் பதிவேற்றப்படாது. எதிர்காலக் கணக்கு தனித் தேர்வாக இருக்கும், அது இப்போது இயக்கப்படவில்லை.',
+        'கணக்கு இல்லாமலும் வலையமைப்பு இல்லாமலும் தொடரலாம். நீங்கள் பின்னர் கணக்கைத் தேர்ந்தெடுத்து ஒப்புதல் பதிவு செய்யும் வரை எதுவும் பதிவேற்றப்படாது. இது சட்ட ஒப்புதல் அல்ல. வலை இந்தச் சாதனத்திலேயே இருக்கும்.',
       ),
       findsOneWidget,
     );
@@ -71,7 +71,10 @@ void main() {
       await tester.tap(find.byKey(const Key('grown-ups')));
       await tester.pumpAndSettle();
       expect(find.text('What is 3 + 4?'), findsWidgets);
-      expect(find.text('Accounts are not in this version.'), findsNothing);
+      expect(
+        find.text('This page stays on this device. Nothing here is uploaded.'),
+        findsNothing,
+      );
       await tester.enterText(find.byKey(const Key('gate-answer')), '6');
       await tester.tap(find.byKey(const Key('gate-continue')));
       await tester.pumpAndSettle();
@@ -79,7 +82,10 @@ void main() {
       await tester.enterText(find.byKey(const Key('gate-answer')), '7');
       await tester.tap(find.byKey(const Key('gate-continue')));
       await tester.pumpAndSettle();
-      expect(find.text('Accounts are not in this version.'), findsOneWidget);
+      expect(
+        find.text('This page stays on this device. Nothing here is uploaded.'),
+        findsOneWidget,
+      );
       await tester.tap(find.text('Language'));
       await tester.pumpAndSettle();
       await tester.tap(find.byKey(const Key('language-ta')));
@@ -90,7 +96,10 @@ void main() {
       await tester.tap(find.byKey(const Key('grown-ups')));
       await tester.pumpAndSettle();
       expect(find.text('3 + 4 எவ்வளவு?'), findsWidgets);
-      expect(find.text('Accounts are not in this version.'), findsNothing);
+      expect(
+        find.text('This page stays on this device. Nothing here is uploaded.'),
+        findsNothing,
+      );
     },
   );
 
