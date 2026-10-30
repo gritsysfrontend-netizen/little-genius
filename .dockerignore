@@ -1,0 +1,7 @@
+.git
+**/node_modules
+**/dist
+**/.dart_tool
+**/build
+**/.env
+*.log

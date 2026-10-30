@@ -1,1 +1,86 @@
-# little-genius Hi 
+# Little Genius
+
+Little Genius is a small learning app for young children. This repository is a Phase 2 slice: one elephant lesson, stored on the device, in English, Hindi, and Tamil. A grown-up creates a local profile. The child can download the lesson and play it again without a network connection.
+
+This is not a finished product. It is not ready for a store, a school, or real child accounts.
+
+## What you can try
+
+- Create a profile with a nickname, a picture, an age band, and a language.
+- Switch the app’s buttons and labels between English, Hindi, and Tamil.
+- Download the elephant activity.
+- Tap the picture, hear the short instruction, and see that “started” and “finished” stay on the device after you close the app.
+
+The Hindi and Tamil sounds were made with a text-to-speech tool for this engineering slice. A native speaker has not signed off on them.
+
+## Run the API
+
+Install Docker, then from the repository root:
+
+```bash
+docker compose -f infrastructure/docker/compose.yaml up --build
+```
+
+The API listens on `http://127.0.0.1:3000`.
+
+- Health: `http://127.0.0.1:3000/api/v1/health`
+- Lesson list: `http://127.0.0.1:3000/api/v1/content/manifest?locale=en&ageBand=2-3`
+
+The compose file starts PostgreSQL 17 and the API. It does not start Redis. The database password in that file is only for this local demo. Do not reuse it anywhere else, and do not put real secrets in the repository.
+
+## Run the app in a browser
+
+Install the Flutter stable channel, then:
+
+```bash
+cd apps/mobile_web
+flutter pub get
+flutter run -d chrome --dart-define=API_BASE_URL=http://127.0.0.1:3000
+```
+
+Start the API first. In the app, create a profile, open Animals, and download the lesson. After that, the lesson can play if the API is stopped.
+
+On the web, the browser can delete saved lessons. A phone keeps them more reliably. The web build does not use SQLite.
+
+## Run on a phone
+
+Android and iOS project files are in `apps/mobile_web`. A debug build can reach an API on the same computer:
+
+- Android emulator: `http://10.0.2.2:3000`
+- iOS simulator: `http://127.0.0.1:3000`
+
+```bash
+cd apps/mobile_web
+flutter run --dart-define=API_BASE_URL=http://10.0.2.2:3000
+```
+
+Cleartext HTTP is allowed only for localhost and the emulator host. This environment does not have an Apple signing certificate or an iOS device, so the iOS app has not been compiled here.
+
+## Checks
+
+From `services/api` (Node.js 24 and PostgreSQL 17):
+
+```bash
+npm test
+```
+
+From `apps/mobile_web`:
+
+```bash
+dart format --output=none --set-exit-if-changed .
+flutter analyze
+flutter test
+flutter build web
+```
+
+The IndexedDB check is separate because it needs Chrome:
+
+```bash
+flutter test --platform chrome test/web/indexeddb_repository_test.dart
+```
+
+## What is not built
+
+Accounts, sign-in, cloud sync, a content editor, tracing, payments, push notifications, analytics, crash reporting, and Redis are not in this slice. Session limits and account export or deletion are named in the grown-up area and are not implemented. Parent account routes exist only as schemas and an API description. The app does not upload progress.
+
+The plans and decision records live in `docs/`.

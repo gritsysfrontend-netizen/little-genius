@@ -1,0 +1,99 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+/// Immutable render document. The SQL migration adds the published-row trigger
+/// and the payload-is-object check. Parent account tables are not created in Phase 2.
+model ContentVersion {
+  contentId       String @map("content_id")
+  contentVersion  Int    @map("content_version")
+  schemaVersion   String @map("schema_version")
+  categoryId      String @map("category_id")
+  ageMinMonths    Int    @map("age_min_months")
+  ageMaxMonths    Int    @map("age_max_months")
+  interactionType String @map("interaction_type")
+  status          String
+  payload         Json
+  payloadSha256   String @map("payload_sha256")
+
+  localizations ContentLocalization[]
+  assetRefs     ContentAssetRef[]
+  packItems     ContentPackItem[]
+
+  @@id([contentId, contentVersion])
+  @@map("content_versions")
+}
+
+model ContentLocalization {
+  contentId       String @map("content_id")
+  contentVersion  Int    @map("content_version")
+  locale          String
+  title           String
+  instruction     String
+  feedbackCorrect String @map("feedback_correct")
+  reviewStatus    String @map("review_status")
+
+  version ContentVersion @relation(fields: [contentId, contentVersion], references: [contentId, contentVersion], onDelete: Restrict)
+
+  @@id([contentId, contentVersion, locale])
+  @@map("content_localizations")
+}
+
+model MediaAsset {
+  assetId      String  @id @map("asset_id")
+  mediaType    String  @map("media_type")
+  locale       String?
+  objectKey    String  @map("object_key")
+  sha256       String
+  byteSize     Int     @map("byte_size")
+  rightsStatus String  @map("rights_status")
+
+  refs ContentAssetRef[]
+
+  @@map("media_assets")
+}
+
+model ContentAssetRef {
+  contentId      String @map("content_id")
+  contentVersion Int    @map("content_version")
+  assetId        String @map("asset_id")
+
+  version ContentVersion @relation(fields: [contentId, contentVersion], references: [contentId, contentVersion], onDelete: Restrict)
+  asset   MediaAsset     @relation(fields: [assetId], references: [assetId], onDelete: Restrict)
+
+  @@id([contentId, contentVersion, assetId])
+  @@map("content_asset_refs")
+}
+
+model ContentPack {
+  packId         String @map("pack_id")
+  packVersion    Int    @map("pack_version")
+  totalBytes     Int    @map("total_bytes")
+  checksumSha256 String @map("checksum_sha256")
+  minAppVersion  String @map("min_app_version")
+  status         String
+
+  items ContentPackItem[]
+
+  @@id([packId, packVersion])
+  @@map("content_packs")
+}
+
+model ContentPackItem {
+  packId         String @map("pack_id")
+  packVersion    Int    @map("pack_version")
+  contentId      String @map("content_id")
+  contentVersion Int    @map("content_version")
+  position       Int
+
+  pack    ContentPack    @relation(fields: [packId, packVersion], references: [packId, packVersion], onDelete: Restrict)
+  version ContentVersion @relation(fields: [contentId, contentVersion], references: [contentId, contentVersion], onDelete: Restrict)
+
+  @@id([packId, packVersion, position])
+  @@map("content_pack_items")
+}

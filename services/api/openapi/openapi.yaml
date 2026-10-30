@@ -1,0 +1,496 @@
+openapi: 3.1.0
+info:
+  title: Little Genius API
+  version: 0.1.0-draft
+  description: >
+    Phase 2 mounts health and published-content routes only. Profile and progress
+    routes are frozen here for Phase 5 and are not implemented.
+servers:
+  - url: https://api.example.invalid/api/v1
+    description: Host is not chosen. example.invalid is a placeholder.
+paths:
+  /health:
+    get:
+      operationId: getHealth
+      security: []
+      responses:
+        '200':
+          description: Process is up. Does not check PostgreSQL.
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: false
+                required: [status]
+                properties:
+                  status: { type: string, enum: [ok] }
+  /health/ready:
+    get:
+      operationId: getReady
+      security: []
+      responses:
+        '200':
+          description: Database connectivity ok. Body stays minimal.
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: false
+                required: [status]
+                properties:
+                  status: { type: string, enum: [ok] }
+        '503':
+          description: Not ready.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Error' }
+  /content/manifest:
+    get:
+      operationId: getContentManifest
+      security: []
+      parameters:
+        - $ref: '#/components/parameters/Locale'
+        - $ref: '#/components/parameters/AgeBand'
+        - name: cursor
+          in: query
+          required: false
+          schema: { type: string, maxLength: 512 }
+      responses:
+        '200':
+          description: Published activities eligible for this band and locale.
+          headers:
+            Cache-Control: { schema: { type: string } }
+            ETag: { schema: { type: string } }
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Manifest' }
+        '400': { $ref: '#/components/responses/Error' }
+        '429': { $ref: '#/components/responses/Error' }
+  /content/{contentId}:
+    get:
+      operationId: getContentVersionPointer
+      security: []
+      parameters:
+        - $ref: '#/components/parameters/ContentId'
+      responses:
+        '200':
+          description: Current published version pointer. No lesson body.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ContentPointer' }
+        '404': { $ref: '#/components/responses/Error' }
+  /content/{contentId}/versions/{version}:
+    get:
+      operationId: getLessonDocument
+      security: []
+      parameters:
+        - $ref: '#/components/parameters/ContentId'
+        - name: version
+          in: path
+          required: true
+          schema: { type: integer, minimum: 1 }
+      responses:
+        '200':
+          description: Immutable local-safe lesson document.
+          headers:
+            ETag:
+              schema: { type: string }
+              description: Quoted payload sha256.
+            Cache-Control:
+              schema: { type: string }
+              description: public, max-age=31536000, immutable
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/LessonDocument' }
+        '404': { $ref: '#/components/responses/Error' }
+  /assets/{assetId}:
+    get:
+      operationId: getAssetDescriptor
+      security: []
+      parameters:
+        - name: assetId
+          in: path
+          required: true
+          schema: { type: string, pattern: '^[a-z0-9._-]{1,80}$' }
+      responses:
+        '200':
+          description: Checksum and a short-lived signed URL. URL is not stored inside the lesson document.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/AssetDescriptor' }
+        '404': { $ref: '#/components/responses/Error' }
+  /profiles:
+    get:
+      operationId: listProfiles
+      security: [{ parentBearer: [] }]
+      responses:
+        '200':
+          description: Profiles owned by the caller. Not mounted in Phase 2.
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: false
+                required: [profiles]
+                properties:
+                  profiles:
+                    type: array
+                    items: { $ref: '#/components/schemas/ChildProfile' }
+        '401': { $ref: '#/components/responses/Error' }
+    post:
+      operationId: createProfile
+      security: [{ parentBearer: [] }]
+      parameters:
+        - $ref: '#/components/parameters/IdempotencyKey'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/ProfileCreate' }
+      responses:
+        '201':
+          description: Created. Not mounted in Phase 2.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ChildProfile' }
+        '401': { $ref: '#/components/responses/Error' }
+        '409': { $ref: '#/components/responses/Error' }
+  /profiles/{profileId}:
+    parameters:
+      - $ref: '#/components/parameters/ProfileId'
+    patch:
+      operationId: updateProfile
+      security: [{ parentBearer: [] }]
+      responses:
+        '200':
+          description: Not mounted in Phase 2.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ChildProfile' }
+        '401': { $ref: '#/components/responses/Error' }
+        '404': { $ref: '#/components/responses/Error' }
+        '409': { $ref: '#/components/responses/Error' }
+    delete:
+      operationId: deleteProfile
+      security: [{ parentBearer: [] }]
+      responses:
+        '202':
+          description: Not mounted in Phase 2.
+        '401': { $ref: '#/components/responses/Error' }
+        '404': { $ref: '#/components/responses/Error' }
+  /profiles/{profileId}/events:batch:
+    post:
+      operationId: syncEvents
+      security: [{ parentBearer: [] }]
+      responses:
+        '200':
+          description: Not mounted in Phase 2.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/EventBatchResult' }
+        '401': { $ref: '#/components/responses/Error' }
+  /profiles/{profileId}/progress:
+    get:
+      operationId: getProgress
+      security: [{ parentBearer: [] }]
+      responses:
+        '200':
+          description: Not mounted in Phase 2.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Progress' }
+        '401': { $ref: '#/components/responses/Error' }
+        '404': { $ref: '#/components/responses/Error' }
+components:
+  securitySchemes:
+    parentBearer:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  parameters:
+    Locale:
+      name: locale
+      in: query
+      required: true
+      schema: { type: string, enum: [en, hi, ta] }
+    AgeBand:
+      name: ageBand
+      in: query
+      required: true
+      schema: { type: string, enum: ['1-2', '2-3', '3-4', '4-5'] }
+    ContentId:
+      name: contentId
+      in: path
+      required: true
+      schema: { type: string, pattern: '^[a-z0-9._-]{1,80}$' }
+    ProfileId:
+      name: profileId
+      in: path
+      required: true
+      schema: { type: string, format: uuid }
+    IdempotencyKey:
+      name: Idempotency-Key
+      in: header
+      required: true
+      schema: { type: string, format: uuid }
+  responses:
+    Error:
+      description: Error body.
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/Error' }
+  schemas:
+    Error:
+      type: object
+      additionalProperties: false
+      required: [error]
+      properties:
+        error:
+          type: object
+          additionalProperties: false
+          required: [code, message, requestId, retryable]
+          properties:
+            code:
+              type: string
+              enum:
+                - UNAUTHENTICATED
+                - VALIDATION_ERROR
+                - PROFILE_NOT_FOUND
+                - CONTENT_NOT_FOUND
+                - CONTENT_VERSION_UNAVAILABLE
+                - ASSET_NOT_FOUND
+                - REVISION_CONFLICT
+                - IDEMPOTENCY_KEY_REUSE
+                - PROFILE_ID_CONFLICT
+                - PAYLOAD_TOO_LARGE
+                - RATE_LIMITED
+                - INTERNAL
+            message: { type: string, maxLength: 200 }
+            requestId: { type: string }
+            retryable: { type: boolean }
+    Manifest:
+      type: object
+      additionalProperties: false
+      required: [manifestVersion, locale, ageBand, items, nextCursor]
+      properties:
+        manifestVersion: { type: string }
+        locale: { type: string, enum: [en, hi, ta] }
+        ageBand: { type: string, enum: ['1-2', '2-3', '3-4', '4-5'] }
+        items:
+          type: array
+          maxItems: 100
+          items: { $ref: '#/components/schemas/ManifestItem' }
+        nextCursor: { type: ['string', 'null'] }
+    ManifestItem:
+      type: object
+      additionalProperties: false
+      required:
+        - contentId
+        - contentVersion
+        - schemaVersion
+        - categoryId
+        - interactionType
+        - title
+        - estimatedDurationSeconds
+        - payloadSha256
+      properties:
+        contentId: { type: string }
+        contentVersion: { type: integer, minimum: 1 }
+        schemaVersion: { type: string, enum: ['1.0'] }
+        categoryId: { type: string }
+        interactionType: { type: string, enum: [tap_to_learn] }
+        title: { type: string }
+        estimatedDurationSeconds: { type: integer, minimum: 1 }
+        packId: { type: string }
+        packVersion: { type: integer }
+        payloadSha256: { type: string, pattern: '^[a-f0-9]{64}$' }
+    ContentPointer:
+      type: object
+      additionalProperties: false
+      required: [contentId, contentVersion, schemaVersion, payloadSha256]
+      properties:
+        contentId: { type: string }
+        contentVersion: { type: integer }
+        schemaVersion: { type: string }
+        payloadSha256: { type: string, pattern: '^[a-f0-9]{64}$' }
+        minAppVersion: { type: string }
+    LessonDocument:
+      type: object
+      additionalProperties: false
+      required:
+        - schemaVersion
+        - contentId
+        - contentVersion
+        - categoryId
+        - ageRange
+        - learningObjectives
+        - difficulty
+        - estimatedDurationSeconds
+        - localizations
+        - assets
+        - interaction
+        - accessibility
+      properties:
+        schemaVersion: { type: string, enum: ['1.0'] }
+        contentId: { type: string }
+        contentVersion: { type: integer, minimum: 1 }
+        categoryId: { type: string }
+        ageRange:
+          type: object
+          additionalProperties: false
+          required: [minMonths, maxMonths]
+          properties:
+            minMonths: { type: integer, minimum: 12, maximum: 60 }
+            maxMonths: { type: integer, minimum: 12, maximum: 60 }
+        learningObjectives:
+          type: array
+          items: { type: string, maxLength: 64 }
+        difficulty: { type: integer, minimum: 1, maximum: 5 }
+        estimatedDurationSeconds: { type: integer, minimum: 10, maximum: 600 }
+        localizations:
+          type: object
+          minProperties: 1
+          additionalProperties: false
+          properties:
+            en: { $ref: '#/components/schemas/Localization' }
+            hi: { $ref: '#/components/schemas/Localization' }
+            ta: { $ref: '#/components/schemas/Localization' }
+        assets:
+          type: array
+          items: { $ref: '#/components/schemas/AssetRef' }
+        interaction: { $ref: '#/components/schemas/TapToLearn' }
+        accessibility:
+          type: object
+          additionalProperties: false
+          required: [imageLabel, requiresAudio]
+          properties:
+            imageLabel:
+              type: object
+              additionalProperties: false
+              properties:
+                en: { type: string }
+                hi: { type: string }
+                ta: { type: string }
+            requiresAudio: { type: boolean }
+    Localization:
+      type: object
+      additionalProperties: false
+      required: [title, instruction, feedbackCorrect]
+      properties:
+        title: { type: string, maxLength: 80 }
+        instruction: { type: string, maxLength: 160 }
+        feedbackCorrect: { type: string, maxLength: 80 }
+        audio:
+          type: object
+          additionalProperties: false
+          properties:
+            instructionAssetId: { type: string }
+    AssetRef:
+      type: object
+      additionalProperties: false
+      required: [assetId, mediaType, sha256]
+      properties:
+        assetId: { type: string }
+        mediaType: { type: string, enum: [image, audio, sound_effect] }
+        sha256: { type: string, pattern: '^[a-f0-9]{64}$' }
+    TapToLearn:
+      type: object
+      additionalProperties: false
+      required: [type, targetAssetId, completionRule, retryPolicy]
+      properties:
+        type: { type: string, enum: [tap_to_learn] }
+        targetAssetId: { type: string }
+        completionRule: { type: string, enum: [target_tapped] }
+        retryPolicy: { type: string, enum: [unlimited] }
+    AssetDescriptor:
+      type: object
+      additionalProperties: false
+      required: [assetId, mediaType, sha256, byteSize, url, urlExpiresAt]
+      properties:
+        assetId: { type: string }
+        mediaType: { type: string, enum: [image, audio, sound_effect] }
+        sha256: { type: string, pattern: '^[a-f0-9]{64}$' }
+        byteSize: { type: integer, minimum: 1 }
+        url: { type: string, format: uri }
+        urlExpiresAt: { type: string, format: date-time }
+    ProfileCreate:
+      type: object
+      additionalProperties: false
+      required: [clientProfileId, nickname, avatarId, ageBand, preferredLocale, bilingualMode]
+      properties:
+        clientProfileId: { type: string, format: uuid }
+        nickname: { type: string, minLength: 1, maxLength: 24 }
+        avatarId: { type: string, enum: [star, sun, leaf, moon, bird, fish] }
+        ageBand: { type: string, enum: ['1-2', '2-3', '3-4', '4-5'] }
+        preferredLocale: { type: string, enum: [en, hi, ta] }
+        bilingualMode: { type: boolean }
+    ProfilePatch:
+      type: object
+      additionalProperties: false
+      properties:
+        nickname: { type: string, minLength: 1, maxLength: 24 }
+        avatarId: { type: string, enum: [star, sun, leaf, moon, bird, fish] }
+        ageBand: { type: string, enum: ['1-2', '2-3', '3-4', '4-5'] }
+        preferredLocale: { type: string, enum: [en, hi, ta] }
+        bilingualMode: { type: boolean }
+    ChildProfile:
+      type: object
+      additionalProperties: false
+      required: [profileId, nickname, avatarId, ageBand, preferredLocale, bilingualMode, revision]
+      properties:
+        profileId: { type: string, format: uuid }
+        nickname: { type: string }
+        avatarId: { type: string }
+        ageBand: { type: string }
+        preferredLocale: { type: string }
+        bilingualMode: { type: boolean }
+        revision: { type: integer, minimum: 1 }
+    EventBatch:
+      type: object
+      additionalProperties: false
+      required: [events]
+      properties:
+        events:
+          type: array
+          minItems: 1
+          maxItems: 50
+          items: { $ref: '#/components/schemas/LearningEvent' }
+    LearningEvent:
+      type: object
+      additionalProperties: false
+      required: [eventId, contentId, contentVersion, eventType, occurredAt]
+      properties:
+        eventId: { type: string, format: uuid }
+        contentId: { type: string }
+        contentVersion: { type: integer, minimum: 1 }
+        eventType: { type: string, enum: [started, completed] }
+        occurredAt: { type: string, format: date-time }
+        durationBucket: { type: string, enum: [lt_1m, m1_to_5, gt_5m] }
+    EventBatchResult:
+      type: object
+      additionalProperties: false
+      required: [applied, duplicates]
+      properties:
+        applied:
+          type: array
+          items: { type: string, format: uuid }
+        duplicates:
+          type: array
+          items: { type: string, format: uuid }
+    Progress:
+      type: object
+      additionalProperties: false
+      required: [profileId, categories]
+      properties:
+        profileId: { type: string, format: uuid }
+        categories:
+          type: array
+          items:
+            type: object
+            additionalProperties: false
+            required: [categoryId, startedCount, completedCount, lastActivityAt]
+            properties:
+              categoryId: { type: string }
+              startedCount: { type: integer, minimum: 0 }
+              completedCount: { type: integer, minimum: 0 }
+              lastActivityAt: { type: ['string', 'null'], format: date-time }

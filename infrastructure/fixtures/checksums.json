@@ -1,0 +1,25 @@
+{
+  "payloadSha256": "70e3c86bba47d84b3139a22a4c1226c0d4af7ef45d9181311b88b76bbc4bdf23",
+  "assets": {
+    "img.elephant.001": {
+      "file": "assets/img.elephant.001.png",
+      "sha256": "1af02ec424c01101d0a6b752e36390664f1489510d643caf944f616e52237179",
+      "bytes": 297008
+    },
+    "aud.elephant.en.instruction": {
+      "file": "assets/aud.elephant.en.instruction.mp3",
+      "sha256": "f01c4585d67a0b1cbad6628c7a4873af8136879a4583c1b6cc5ff010f42114d1",
+      "bytes": 12783
+    },
+    "aud.elephant.hi.instruction": {
+      "file": "assets/aud.elephant.hi.instruction.mp3",
+      "sha256": "0a11ae5602b15aebbb9d5738a5b8b65e9e95a91d3adb6806d7e5414e1b8963c4",
+      "bytes": 16556
+    },
+    "aud.elephant.ta.instruction": {
+      "file": "assets/aud.elephant.ta.instruction.mp3",
+      "sha256": "6e20e9425764d07eec94406b1e439f0679049967c43b419336b227662d17e094",
+      "bytes": 13348
+    }
+  }
+}
